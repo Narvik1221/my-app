@@ -26,11 +26,13 @@ const App = () => {
         if (json) {
           console.log("json");
           console.log(json);
+          console.log(json[0]);
           let myData = "";
-          json.map((i) => {
+          json.map((i,index) => {
+              if(index==0)
             myData = i;
           });
-          //console.log("myData)");
+          console.log("myData)");
           console.log(myData);
           let myArray = [];
           for (var key of Object.keys(myData)) {
@@ -51,40 +53,39 @@ const App = () => {
       });
   }, []);
 
-  const setItems = () => {
-    const allDays = document.querySelector(".react-calendar__month-view__days");
-    allDays.forEach((i) => {
-      i.click();
-    });
-  };
+  
+
 
   const deleteItems = () => {
     const allDays = document.querySelectorAll(".event-marked,.selected");
-
-    const childs= [...allDays].map((i) => i.children[0].className='');
-    fetch(url + "/1", {
-      method: "DELETE",
-      headers: { "content-type": "application/json" },
-    })
-      .then((res) => {
-        return res.json();
+    if(window.confirm("Удалить все смены?")){
+      const childs= [...allDays].map((i) => i.children[0].className='');
+      fetch(url + "/1", {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
       })
-      .then((json) => {
-        const start = { id: "1" };
-        fetch(url, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(start),
+        .then((res) => {
+          return res.json();
         })
-          .then((res) => {
-            return res.json();
+        .then((json) => {
+          const start = { id: "1" };
+          fetch(url, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(start),
           })
-          .then((json) => {
-            console.log("empty");
-            console.log(json);
-          });
-        setEvents([]);
-      });
+            .then((res) => {
+              return res.json();
+            })
+            .then((json) => {
+              console.log("empty");
+              console.log(json);
+            });
+          setEvents([]);
+        });
+    }
+    
+   
   };
 
   useEffect(() => {
@@ -320,10 +321,12 @@ const App = () => {
           setMonth={setMonth}
           events={events}
           deleteEvent={deleteEvent}
-        ></MyPrice>
-        <button className="create-btn abcolute-btn" onClick={deleteItems}>
-          Удалить все смены
-        </button>
+        >  <button className="create-btn delete-items" onClick={deleteItems}>
+        Удалить все смены
+      </button></MyPrice>
+       
+       
+        
       </div>{" "}
     </div>
   );

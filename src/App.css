@@ -48,7 +48,7 @@ p {
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-start;
-  margin: 0 auto;
+  margin: 0 auto 40px auto;
 }
 
 .calendar-container {
@@ -522,7 +522,9 @@ margin-bottom: 16px;
     max-width: 142px;
   }
  }
+ .bottom{
 
+}
  @media (max-width: 400px) {
   .event-actions{
     gap: 6px;
@@ -535,8 +537,28 @@ margin-bottom: 16px;
     max-width: 120px;
   }
  }
-.abcolute-btn{
-  position: absolute;
-  top: 1242px;
-  left: 50px;
+.delete-items{
+  max-height: 44px;
+  margin-bottom: 20px;
+}
+.current{
+  justify-content: space-between;
+}
+@media only screen and (max-width : 320px) {
+  .hour0::after,.hour1::after ,.hour2::after{
+    scale: (0.2);
+  } 
+}
+
+@media only screen and (max-width : 480px) {
+  .hour0::after,.hour1::after ,.hour2::after{
+    scale: (0.3);
+  } 
+}
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 768px) {
+  .hour0::after,.hour1::after ,.hour2::after{
+    scale: (0.4);
+  }  
 }

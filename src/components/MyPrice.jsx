@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-export default function MyPrice({ month, setMonth, events, deleteEvent }) {
+export default function MyPrice({children, month, setMonth, events, deleteEvent }) {
   const [total, setTotal] = useState(45000);
   const [current, setCurrent] = useState(0);
   const [bonusHours,setBonusHours]=useState(0)
@@ -9,7 +9,50 @@ export default function MyPrice({ month, setMonth, events, deleteEvent }) {
   const [searchValue, setSearchValue] = useState("");
 
 
+  const url = new URL(
+    "https://64dc9bc5e64a8525a0f6ccaa.mockapi.io/api/v1/calendare/2"
+  );
+  useEffect(() => {
+    fetch(url, {
+      method: "GET",
+      headers: { "content-type": "application/json" },
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => {
+  
+          console.log("total");
+          console.log(json);
+          for (var key of Object.keys(json)) {
+            const myTotal=+json[key]
+            console.log(myTotal);
 
+            setTotal(myTotal)
+            }
+         
+      });
+  }, []);
+
+  const changeTotal=(searchValue)=>{
+    const myTotal={"total":searchValue}
+      let requestOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Credentials": "true",
+          "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        },
+       
+        body: JSON.stringify(myTotal),
+      };
+      fetch(url , requestOptions)
+        .then((res) => res.json())
+        .then((result) => {
+          console.log(result)
+        });
+  }
   useEffect(() => {
     setPriceForDay(Math.round(total / workedDays / 8))
   }, [total,workedDays]);
@@ -98,10 +141,13 @@ export default function MyPrice({ month, setMonth, events, deleteEvent }) {
   }, [,month]);
   return (
     <div className="total-inner">
-        <h4 className="total-price">
+      <div className="total-top current">
+      <h4 className="total-price ">
         {" "}
         ЗП текущая :<br></br><span id="X">{current*Math.round(total / workedDays)+bonusHours} $</span> 
       </h4>
+        {children}
+      </div>
         <div className="total-top">
         <h4 className="total-price">
         {" "}
@@ -122,6 +168,7 @@ export default function MyPrice({ month, setMonth, events, deleteEvent }) {
             e.preventDefault();
             setTotal(searchValue);
             setSearchValue("");
+            changeTotal(searchValue)
           }}
         >
           Cохранить
