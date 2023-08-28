@@ -467,7 +467,7 @@ margin-bottom: 16px;
   right: 0;
   position: absolute;
   display: block;
-  scale: 0.5;
+  scale: 0.2;
   content: "\2B50";
 }
 .hour1::after {
@@ -476,7 +476,7 @@ margin-bottom: 16px;
   right: 0;
   position: absolute;
   display: block;
-  scale: 0.5;
+  scale: 0.2;
   content: "\2B50\2B50";
 }
 .hour2::after {
@@ -485,7 +485,7 @@ margin-bottom: 16px;
   right: 0;
   position: absolute;
   display: block;
-  scale: 0.5;
+  scale: 0.2;
   content: "\2B50 \2B50 \2B50";
 }
 
@@ -522,9 +522,6 @@ margin-bottom: 16px;
     max-width: 142px;
   }
  }
- .bottom{
-
-}
  @media (max-width: 400px) {
   .event-actions{
     gap: 6px;
