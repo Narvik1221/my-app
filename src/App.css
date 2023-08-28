@@ -467,8 +467,11 @@ margin-bottom: 16px;
   right: 0;
   position: absolute;
   display: block;
-  scale: 0.2;
   content: "\2B50";
+  -webkit-transform: scale(0.2);
+  -moz-transform: scale(0.2);
+  -o-transform: scale(0.2);
+  transform: scale(0.2);
 }
 .hour1::after {
   top: 1px;
@@ -476,7 +479,11 @@ margin-bottom: 16px;
   right: 0;
   position: absolute;
   display: block;
-  scale: 0.2;
+ 
+  -webkit-transform: scale(0.2);
+  -moz-transform: scale(0.2);
+  -o-transform: scale(0.2);
+  transform: scale(0.2);
   content: "\2B50\2B50";
 }
 .hour2::after {
@@ -485,7 +492,10 @@ margin-bottom: 16px;
   right: 0;
   position: absolute;
   display: block;
-  scale: 0.2;
+  -webkit-transform: scale(0.2);
+  -moz-transform: scale(0.2);
+  -o-transform: scale(0.2);
+  transform: scale(0.2);
   content: "\2B50 \2B50 \2B50";
 }
 
