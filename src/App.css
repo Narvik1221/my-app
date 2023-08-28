@@ -544,20 +544,20 @@ margin-bottom: 16px;
 .current{
   justify-content: space-between;
 }
-@media only screen and (max-width : 320px) {
+@media  (max-width : 320px) {
   .hour0::after,.hour1::after ,.hour2::after{
     scale: (0.2);
   } 
 }
 
-@media only screen and (max-width : 480px) {
+@media  (max-width : 480px) {
   .hour0::after,.hour1::after ,.hour2::after{
     scale: (0.3);
   } 
 }
 
 /* Small Devices, Tablets */
-@media only screen and (max-width : 768px) {
+@media (max-width : 768px) {
   .hour0::after,.hour1::after ,.hour2::after{
     scale: (0.4);
   }  
