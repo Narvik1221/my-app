@@ -222,6 +222,8 @@ p {
 }
 
 .event-form {
+  display: flex;
+
   margin-left: 32px;
 width: 100%;
 max-width: 414px;
@@ -277,8 +279,11 @@ gap: 20px;
   max-width: 160px;
 }
 .create-btn{
+  height: 72px;
+  max-width: 220px;
+  width: 100%;
   opacity: 1;
-  padding: 0.9rem 1.5rem;
+  padding: 20px 16px ;
   font-size: 16px;
   font-weight: 700;
   line-height: 1;
@@ -383,7 +388,7 @@ gap: 20px;
   display: flex;
   flex-direction: column;
   text-align: left;
-  margin: 20px 40px 40px 0;
+  margin: 46px 40px 40px 0;
   width: 100%;
   max-width: 460px;
   border: 1px solid #ccc;
@@ -522,7 +527,9 @@ margin-bottom: 16px;
   transform: scale(0.4);
   content: "\2B50 \2B50 ";
 }
-
+.create-btn.active{
+  background-color: rgb(64, 13, 167)
+}
 /* @media (max-width: 400px) {
   .hour2::after {
     top: 1px;

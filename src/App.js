@@ -10,6 +10,7 @@ const App = () => {
   const [events, setEvents] = useState([]);
   const [month, setMonth] = useState(0);
   const [deleteEvent, setDeleteEvent] = useState(false);
+  const [multiple, setMultiple] = useState(false);
   const url = new URL(
     "https://64dc9bc5e64a8525a0f6ccaa.mockapi.io/api/v1/calendare"
   );
@@ -54,7 +55,10 @@ const App = () => {
   }, []);
 
   
-
+  useEffect(() => {
+    if(multiple)
+   Create_Event_Fun()
+  }, [selectedDate]);
 
 
 
@@ -145,14 +149,11 @@ const App = () => {
   
   },[,month])
 
-  const Create_Event_Fun = (selectedDate,mySelected) => {
+  const Create_Event_Fun = () => {
     const myMonth = document.querySelector(
       ".react-calendar__navigation__label__labelText.react-calendar__navigation__label__labelText--from"
     );
     let selected = document.querySelector(".selected");
-      if(!selected){
-        selected=mySelected
-      }
     if (selectedDate) {
       const newEvent = {
         id: new Date().getTime(),
@@ -248,7 +249,15 @@ const App = () => {
         <div className="event-container">
           {selectedDate && (
             <div className="event-form">
-              <p className="selected-date"> Дата: {selectedDate} </p>{" "}
+              <button
+                className="create-btn"
+                onClick={(event)=>{
+                  event.target.classList.toggle('active')
+                  setMultiple(!multiple)}}
+              >
+                Быстрый режим {multiple?'вкл.':"выкл."}
+              </button>{" "}
+            
               <button
                 className="create-btn"
                 onClick={(event) => Create_Event_Fun(selectedDate)}
