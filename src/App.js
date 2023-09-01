@@ -50,43 +50,13 @@ const App = () => {
             }
           }
         }
-      });
+      }).catch(err => console.log(err)) ;
   }, []);
 
   
 
 
-  const deleteItems = () => {
-    const allDays = document.querySelectorAll(".event-marked,.selected");
-    if(window.confirm("Удалить все смены?")){
-      const childs= [...allDays].map((i) => i.children[0].className='');
-      fetch(url + "/1", {
-        method: "DELETE",
-        headers: { "content-type": "application/json" },
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((json) => {
-          const start = { id: "1" };
-          fetch(url, {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify(start),
-          })
-            .then((res) => {
-              return res.json();
-            })
-            .then((json) => {
-              console.log("empty");
-              console.log(json);
-            });
-          setEvents([]);
-        });
-    }
-    
-   
-  };
+
 
   useEffect(() => {
     console.log("events ffect");
@@ -108,7 +78,7 @@ const App = () => {
         .then((result) => {
           console.log("result");
           console.log(result);
-        });
+        }).catch(err => console.log(err)) ;
     }
   }, [events]);
 
@@ -119,10 +89,15 @@ const App = () => {
     const allDate = [...allDays].map((i) => i.children[0]);
     events.map((event) => {
       if (event.bonus > 0) {
+        
         if (localStorage.hasOwnProperty(`${event.id}`)) {
           const date = JSON.parse(localStorage.getItem(`${event.id}`));
           allDate.forEach((i) => {
             if (i.ariaLabel == date) {
+              if(event.bonus>2){
+                i.classList.add(`hour2`);
+              }
+            
               i.classList.add(`hour${event.bonus - 1}`);
             }
           });
@@ -151,21 +126,33 @@ const App = () => {
 
   const Date_Click_Fun = (date) => {
     const selected = document.querySelector(".selected");
-
-    events.forEach((i) => {
-      if (i.date + "" == date + "") {
-      }
-    });
-
+    console.log('date')
+    console.log(date)
     setSelectedDate(date.toDateString());
-  };
 
-  const Create_Event_Fun = () => {
+  };
+  useEffect(()=>{
+      const allDays = document.querySelectorAll(".react-calendar__month-view__days__day");
+      [...allDays].forEach(i=>{
+
+      if(i.className=="react-calendar__tile react-calendar__month-view__days__day"){
+        const child = i.querySelector("abbr");
+        i.click()
+        
+      }
+
+      })
+  
+  },[,month])
+
+  const Create_Event_Fun = (selectedDate,mySelected) => {
     const myMonth = document.querySelector(
       ".react-calendar__navigation__label__labelText.react-calendar__navigation__label__labelText--from"
     );
-    const selected = document.querySelector(".selected");
-
+    let selected = document.querySelector(".selected");
+      if(!selected){
+        selected=mySelected
+      }
     if (selectedDate) {
       const newEvent = {
         id: new Date().getTime(),
@@ -178,7 +165,6 @@ const App = () => {
         setDeleteEvent(false);
         setEvents([...events, newEvent]);
         setSelectedDate(null);
-        setEventName("");
         setSelectedDate(newEvent.date);
       }
     }
@@ -190,11 +176,11 @@ const App = () => {
 
     const updated_Events = events.map((event) => {
       if (event.id === eventId) {
-        if (event.bonus + hours >= 0 && event.bonus + hours < 4) {
+        if (event.bonus + hours >= 0 && event.bonus + hours < 6) {
           if (hours <= 0) {
             child.classList.remove(`hour${event.bonus - 1}`);
           } else {
-            child.classList.add(`hour${event.bonus}`);
+            child.classList.add(`hour${event.bonus-1}`);
             localStorage.setItem(
               `${event.id}`,
               JSON.stringify(child.ariaLabel)
@@ -234,7 +220,7 @@ const App = () => {
       <div className="container">
         <h1 className="title">
           {" "}
-          Именной календарь Юрия Владимировича Понамарёва{" "}
+          Именной календарь Юрия Владимировича Пономарёва{" "}
         </h1>
         <div className="calendar-container">
           <div className="buttons">
@@ -265,7 +251,7 @@ const App = () => {
               <p className="selected-date"> Дата: {selectedDate} </p>{" "}
               <button
                 className="create-btn"
-                onClick={(event) => Create_Event_Fun(event)}
+                onClick={(event) => Create_Event_Fun(selectedDate)}
               >
                 Добавить смену{" "}
               </button>{" "}
@@ -321,9 +307,7 @@ const App = () => {
           setMonth={setMonth}
           events={events}
           deleteEvent={deleteEvent}
-        >  <button className="create-btn delete-items" onClick={deleteItems}>
-        Удалить все смены
-      </button></MyPrice>
+        >  </MyPrice>
        
        
         
