@@ -9,61 +9,13 @@ export default function MyPrice({children, month, setMonth, events, deleteEvent 
   const [searchValue, setSearchValue] = useState("");
 
 
-  // const url = new URL(
-  //   "https://64dc9bc5e64a8525a0f6ccaa.mockapi.io/api/v1/calendare/2"
-  // );
-  // useEffect(() => {
-  //   fetch(url, {
-  //     method: "GET",
-  //     headers: { "content-type": "application/json" },
-  //   })
-  //     .then((res) => {
-  //       return res.json();
-  //     })
-  //     .then((json) => {
-  
-  //         console.log("total");
-  //         console.log(json);
-  //         for (var key of Object.keys(json)) {
-  //           const myTotal=+json[key]
-  //           console.log(myTotal);
-
-  //           setTotal(myTotal)
-  //           }
-         
-  //     });
-  // }, []);
-
-  // const changeTotal=(searchValue)=>{
-  //   const myTotal={"total":searchValue}
-  //     let requestOptions = {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Access-Control-Allow-Origin": "*",
-  //         "Access-Control-Allow-Credentials": "true",
-  //         "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
-  //       },
-       
-  //       body: JSON.stringify(myTotal),
-  //     };
-  //     fetch(url , requestOptions)
-  //       .then((res) => res.json())
-  //       .then((result) => {
-  //         console.log(result)
-  //       });
-  // }
-  // useEffect(() => {
-  //   setPriceForDay(Math.round(total / workedDays / 8))
-  // }, [total,workedDays]);
   useEffect(() => {
-    console.log('workedDays')
-    console.log(workedDays)
+
     currentPrices()
-  }, [events,month]);
+  }, [events,workedDays,weekendDays]);
 
   const currentPrices=()=>{
-    console.log("curPR")
+  
     const myMonth=document.querySelector(".react-calendar__navigation__label__labelText.react-calendar__navigation__label__labelText--from")
     //console.log(events)
     let prices=0
@@ -71,20 +23,18 @@ export default function MyPrice({children, month, setMonth, events, deleteEvent 
     events.forEach((e) => {
       if(e.month==myMonth.textContent)
       {
-        console.log(events)
+       
         if(e.selected.indexOf("react-calendar__month-view__days__day--weekend") >= 0)
         {
           prices+=2
           if(e.bonus>=0){
-            for(let i=1;i<=e.bonus;i++){
-                //console.log('priceForDay')
-                //console.log(Math.round(total / workedDays / 8))
-              //console.log(total,workedDays)
+            for(let i=1;i<=e.bonus*2;i++){
+   
               if(i>2){
-                bonus+=2*Math.round(total / workedDays / 8)
+                bonus+=2*Math.round(total / workedDays / 16)
               }
               else{
-                bonus+=1.5*Math.round(total / workedDays / 8)
+                bonus+=1.5*Math.round(total / workedDays / 16)
               }
             }
           }
@@ -92,14 +42,14 @@ export default function MyPrice({children, month, setMonth, events, deleteEvent 
         else{
           prices+=1
           if(e.bonus>=0){
-            for( let i=1;i<=e.bonus;i++){
+            for( let i=1;i<=e.bonus*2;i++){
                 //console.log('priceForDay')
-              console.log(Math.round(total / workedDays / 8))
+              console.log(Math.round(total / workedDays / 16))
               if(i>2){
-                bonus+=2*Math.round(total / workedDays / 8)
+                bonus+=2*Math.round(total / workedDays / 16)
               }
               else{
-                bonus+=1.5*Math.round(total / workedDays / 8)
+                bonus+=1.5*Math.round(total / workedDays / 16)
               }
             }
           }
@@ -138,7 +88,7 @@ export default function MyPrice({children, month, setMonth, events, deleteEvent 
         [...weekendDays].length +
         [...doubleDays].length
     );
-  }, [,month]);
+  }, [events,month]);
   return (
     <div className="total-inner">
       <div className="total-top current">
@@ -153,27 +103,7 @@ export default function MyPrice({children, month, setMonth, events, deleteEvent 
         {" "}
         ЗП за месяц:<br></br><span id="X">{total} $</span> 
       </h4>
-        {/* <form className="search">
-        <input
-          className="search-input"
-          type="text"
-          name="name"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          placeholder="Изменить ЗП "
-        />
-        <button
-          className="search-button"
-          onClick={(e) => {
-            e.preventDefault();
-            setTotal(searchValue);
-            setSearchValue("");
-            changeTotal(searchValue)
-          }}
-        >
-          Cохранить
-        </button>
-      </form> */}
+        {}
         </div>
     
       
