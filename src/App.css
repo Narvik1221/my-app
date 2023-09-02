@@ -493,19 +493,14 @@ margin-bottom: 16px;
   .event-form{
    margin-left: 0;
   }
-  .search-button,.search-input,.create-btn{
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-  .search-input{
-    max-width: 142px;
-  }
+
  }
  @media (max-width: 400px) {
+
   .event-actions{
     gap: 6px;
   }
-  .delete-btn{
+  .delete-btn,.search-button{
    font-size: 14px;
    padding: 8px;
   }
