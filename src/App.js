@@ -97,6 +97,7 @@ const App = () => {
 
   useEffect(() => {
     console.log("events ffect");
+    console.log(events)
     if (events.length > 0) {
       let requestOptions = {
         method: "PUT",
@@ -303,16 +304,16 @@ const App = () => {
                                 ))}
                               </select>
                               <button
-                                className="search-button"
+                                className="delete-btn"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   Update_Event_Fun(event.id, searchParams);
                                 }}
                               >
-                                 доп часы
+                                  + доп часы
                               </button>
                             </form>{" "}
-                            {/* <button
+                             {/* <button
                               className="delete-btn"
                               onClick={() => {
                                 Update_Event_Fun(event.id, 1);
@@ -327,7 +328,7 @@ const App = () => {
                               }}
                             >
                               - час подработки{" "}
-                            </button>{" "} */}
+                            </button>{" "}  */}
                           </div>{" "}
                         </div>{" "}
                         <div className="event-card-body">
