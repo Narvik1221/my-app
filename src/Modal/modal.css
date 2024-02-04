@@ -1,0 +1,70 @@
+.modal {
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0,0,0 , 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    visibility: hidden;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+}
+.modal.active{
+    z-index: 15;
+    visibility: visible;
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal__content {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    max-height: 100vh;
+    max-width: 480px;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: white;
+    min-width:  400px;
+    width: 100%;
+    min-height: 14vh;
+    transform: scale(0.5);
+    transition: 0.4s all;
+}
+
+.modal__close{
+    scale: 0.5;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    transition: all 0.3s;
+}
+.modal__close:hover{
+    scale: 0.6;
+}
+
+.modal__content.active {
+
+    transform: scale(0.85);
+}
+.container{
+    min-width: 320px;
+    max-width: 500px;
+}
+
+.dropdown-toggle{
+    display: flex;
+    align-items: center;
+
+    min-width: 220px;
+}
+.dropdown-toggle::after{
+    margin-left: auto !important;
+}
