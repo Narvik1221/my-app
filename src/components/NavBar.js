@@ -23,14 +23,14 @@ const NavBar = observer(() => {
     user.setUser({});
     user.setIsAuth(false);
     user.setRole(false);
-    localStorage.removeItem("userData")
-    setUserData(undefined)  
-    history(SHOP_ROUTE)
+    localStorage.removeItem("userData");
+    setUserData(undefined);
+    history(SHOP_ROUTE);
   };
   useEffect(() => {
     try {
       let myUser = localStorage.getItem("userData");
-      console.log(myUser);
+      console.log(user.name);
       if (myUser) {
         setUserData(JSON.parse(myUser));
       }
@@ -40,18 +40,32 @@ const NavBar = observer(() => {
   }, []);
   return (
     <Navbar bg="dark" variant="dark">
-      <Container fluid="xxl">
-        <NavLink style={{ color: "white" ,fontSize:"30px",paddingLeft:"8px"}} to={SHOP_ROUTE}>
+      <Container
+        fluid="xxl"
+        style={{
+          flexWrap: "wrap",
+        }}
+      >
+        <NavLink
+          style={{ color: "white", fontSize: "30px", paddingLeft: "8px" }}
+          to={SHOP_ROUTE}
+        >
           FAMILY_TREE
         </NavLink>
         {user.isAuth ? (
-          <Nav className="ml-auto" style={{ color: "white", gap: "12px",display:"flex",alignItems:"center" }}>
-            {userData && (
-              <><span className="modal-row">{"Пользователь: "}</span>
-                <span className="modal-row">{userData.name}</span>
-                <span className="modal-row">{userData.surname}</span>
-              </>
-            )}
+          <Nav
+            className="ml-auto"
+            style={{
+              color: "white",
+              gap: "12px",
+              display: "flex",
+              alignItems: "center",
+              paddingLeft: "8px",
+            }}
+          >
+            <span className="modal-row">{"Пользователь: "}</span>
+            <span className="modal-row">{user.name}</span>
+            <span className="modal-row">{user.surname}</span>
 
             {/* <div
               style={{ cursor: "pointer", height: "40px" }}

@@ -17,13 +17,15 @@ import {
 } from "../http/deviceAPI";
 import Form from "react-bootstrap/Form";
 import UploadAvatar from "../components/UploadAvatar";
-
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 const TreePage = observer(() => {
   const { user } = useContext(Context);
   const [tree, setTree] = useState(false);
   const { id } = useParams();
   const [svg, setSvg] = useState(false);
   const [data, setData] = useState(false);
+  const [h, setH] = useState(false);
+  const [w, setW] = useState(false);
   const [changeItem, setChangeItem] = useState({});
   const [createItem, setCreateItem] = useState({});
   const [connections, setConnections] = useState(false);
@@ -48,11 +50,89 @@ const TreePage = observer(() => {
   const [modalCreate, setModalCreate] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [userData, setUserData] = useState(false);
+  const [form, setForm] = useState(false);
   const [file, setFile] = useState(null);
+  const [validated, setValidated] = useState(false);
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    event.preventDefault();
+    setValidated(true);
+  };
+  useEffect(() => {
+    const ele = document.getElementById("container-drag");
+    //panzoom(ele);
+    // Set initial scroll position
+
+    let pos = {
+      top: 0,
+      left: 0,
+      x: 0,
+      y: 0,
+    };
+
+    const mouseDownHandler = function (e) {
+      pos = {
+        top: ele.scrollTop,
+        left: ele.scrollLeft,
+        x: e.clientX,
+        y: e.clientY,
+      };
+
+      document.addEventListener("mousemove", mouseMoveHandler);
+      document.addEventListener("mouseup", mouseUpHandler);
+    };
+
+    const mouseMoveHandler = function (e) {
+      const dx = e.clientX - pos.x;
+      const dy = e.clientY - pos.y;
+
+      ele.scrollTop = pos.top - dy;
+      ele.scrollLeft = pos.left - dx;
+    };
+
+    const mouseUpHandler = function () {
+      document.removeEventListener("mousemove", mouseMoveHandler);
+      document.removeEventListener("mouseup", mouseUpHandler);
+
+      ele.style.cursor = "grab";
+      ele.style.removeProperty("user-select");
+    };
+
+    ele.addEventListener("mousedown", function (event) {
+      ele.style.cursor = "grabbing";
+      ele.style.userSelect = "none";
+      mouseDownHandler(event);
+    });
+  }, []); //стартовая позиция окна
+
   useEffect(() => {
     fetchOneTree(id).then((data) => setTree(data));
   }, []);
-
+  useEffect(() => {
+    if (tree) {
+      const counts = {};
+      tree.people.forEach(function (x) {
+        if (x.parent !== "") {
+          if (x.spouses[0]) counts[x.parent] = (counts[x.parent] || 0) + 2;
+          else counts[x.parent] = (counts[x.parent] || 0) + 1;
+        }
+      });
+      console.log(counts);
+      let sum = 0;
+      Object.entries(counts).forEach(([key, value]) => {
+        if (value > 1) {
+          sum += value;
+        }
+        // "someKey" "some value", "hello" "world", "js javascript foreach object"
+      });
+      setW(sum);
+      setH(Object.keys(counts).length);
+    }
+  }, [tree]);
   useEffect(() => {
     let myUser = localStorage.getItem("userData");
     console.log(myUser);
@@ -60,30 +140,30 @@ const TreePage = observer(() => {
       setUserData(JSON.parse(myUser));
     }
   }, []);
+
   useEffect(() => {
-    console.log(
-      userData.role == "ADMIN"
-        ? true
-        : user.isAuth && tree.userId == userData.id
-    );
-  }, [userData]);
-  useEffect(() => {
-    if(tree){
-   
-        console.log(tree.people.length)
-      
+    if (tree) {
+      console.log(tree.people.length);
+
       setSvg(
         d3
-          .select(".class_b")
+          .select(".transform-component-module_content__FBWxo ")
           .append("svg")
-          .attr("width", tree.people.length*300<1500?1500:tree.people.length*400)
-          .attr("height", tree.people.length*300<1000?1000:tree.people.length*400)
+          .attr(
+            "width",
+            w * 300 < window.screen.width ? window.screen.width : w * 300 + 400 // tree.people.length * 300 < 1500 ? 1500 : tree.people.length * 400
+          )
+          .attr(
+            "height",
+            h * 300 < window.screen.height
+              ? window.screen.height * 1.5
+              : h * 350 + 400 // tree.people.length * 300 < 1000 ? 1000 : tree.people.length * 400
+          )
           .append("g")
-          .attr("transform", "translate(50,50)")
+          .attr("transform", "translate(150,150)")
       );
     }
-   
-  }, [tree]);
+  }, [w]);
   useEffect(() => {
     if (tree) {
       setData(tree.people);
@@ -112,7 +192,16 @@ const TreePage = observer(() => {
   }, [data]);
   useEffect(() => {
     if (dataStructure) {
-      var treeStructure = d3.tree().size([tree.people.length*300<1000?1000:tree.people.length*300, tree.people.length*300<1300?800:tree.people.length*300]);
+      var treeStructure = d3.tree().size([
+        w * 300 < window.screen.width - window.screen.width / 9
+          ? window.screen.width - window.screen.width / 9
+          : w * 300,
+        h * 300 < window.screen.height - window.screen.height / 2
+          ? window.screen.height - window.screen.height / 2
+          : h * 300,
+        //tree.people.length * 300 < 1000 ? 1000 : tree.people.length * 300,
+        // tree.people.length * 300 < 1300 ? 800 : tree.people.length * 300,
+      ]);
       setInformation(treeStructure(dataStructure));
     }
   }, [dataStructure]);
@@ -180,7 +269,7 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return process.env.REACT_APP_API_URL +"/"+ d.data.img;
+            return process.env.REACT_APP_API_URL + "/" + d.data.img;
           })
           .classed("img-card", true)
       );
@@ -200,7 +289,7 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return process.env.REACT_APP_API_URL +'/'+ d.data.spouses[0]?.img;
+            return process.env.REACT_APP_API_URL + "/" + d.data.spouses[0]?.img;
           })
           .classed("img-card", true)
           .classed("hide", function (d) {
@@ -300,7 +389,7 @@ const TreePage = observer(() => {
           return d.data.name;
         })
         .attr("x", function (d) {
-          return d.x ;
+          return d.x;
         })
         .attr("y", function (d) {
           return d.y + 120;
@@ -328,7 +417,7 @@ const TreePage = observer(() => {
           return d.data.surname;
         })
         .attr("x", function (d) {
-          return d.x ;
+          return d.x;
         })
         .attr("y", function (d) {
           return d.y + 140;
@@ -360,18 +449,6 @@ const TreePage = observer(() => {
       });
     }
   }, [r]);
-
-  const [validated, setValidated] = useState(false);
-
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    setValidated(true);
-  };
 
   const openModal = (rect) => {
     setSelectedItem(rect);
@@ -413,40 +490,54 @@ const TreePage = observer(() => {
       console.error(e);
     }
   };
+  useEffect(() => {
+    console.log(selectedItem);
+  }, [selectedItem]);
+  useEffect(() => {
+    if (form) {
+      console.log(form)
+      createDevice();
+    }
+  }, [form]);
   const createDevice = () => {
     try {
-      const formData = new FormData();
-      formData.append("name", createItem.name);
-      formData.append("surname", createItem.surname);
-      formData.append("patr", createItem.patr);
-      formData.append("sex", createItem.sex);
-      formData.append("dateOfBirthday", createItem.dateOfBirthday);
-      if (createItem.dateOfDeath)
-        formData.append("dateOfDeath", createItem.dateOfDeath);
-      formData.append("img", file);
-      console.log(formData);
+      let myFormData=new FormData()
+      myFormData.append('familyId', createItem.familyId)
+      myFormData.append('parent', createItem.parent)
+      myFormData.append('name', createItem.name)
+      myFormData.append('surname', createItem.surname)
+      if(createItem.patr)
+      myFormData.append('patr', createItem.patr)
+      myFormData.append('sex', createItem.sex)
+      myFormData.append('dateOfBirthday', createItem.dateOfBirthday)
+      if(createItem.dateOfDeath)
+      myFormData.append('dateOfDeath', createItem.dateOfDeath)
+      myFormData.append('img', file)
+      console.log(form);
       console.log(createItem);
-      console.log(selectedItem.id);
-      if (
-        createItem.dateOfBirthday &&
-        createItem.sex &&
-        createItem.surname &&
-        createItem.name
-      ) {
-        if (spouse) {
-          formData.append("personId", selectedItem.id);
-          createSpouse(formData).then((data) => {
-            console.log(data);
-            window.location.reload();
-          });
-        } else {
-          formData.append("parent", createItem.parent);
-          formData.append("familyId", createItem.familyId);
-          createPerson(formData).then((data) => {
-            console.log(data);
-            window.location.reload();
-            //window.location.reload()
-          });
+      console.log(createItem.dateOfBirthday);
+      console.log(createItem.dateOfBirthday);
+      if ( myFormData.has('name')) {
+        if (
+          createItem.dateOfBirthday &&
+          createItem.sex &&
+          createItem.surname &&
+          createItem.name
+        ) {
+          if (spouse) {
+            console.log(spouse);
+            // formData.append("personId", selectedItem.id);
+            createSpouse(myFormData).then((data) => {
+              console.log(data);
+              window.location.reload();
+            });
+          } else {
+            createPerson(myFormData).then((data) => {
+              console.log( myFormData)
+              console.log(data);
+              //window.location.reload();
+            });
+          }
         }
       }
     } catch (e) {
@@ -483,7 +574,7 @@ const TreePage = observer(() => {
   return (
     <Container fluid className="mt-3">
       <Modal active={modalDelete} setActive={setModalDelete}>
-        <div >
+        <div>
           {selectedItem && (
             <Container fluid>
               <div className="modal-inner">
@@ -514,7 +605,7 @@ const TreePage = observer(() => {
                   className="image-modal"
                   width={300}
                   height={300}
-                  src={process.env.REACT_APP_API_URL +'/'+ selectedItem.img}
+                  src={process.env.REACT_APP_API_URL + "/" + selectedItem.img}
                 />
                 <div className="modal-row">
                   <span>Имя: </span>
@@ -554,17 +645,18 @@ const TreePage = observer(() => {
                         Изменить
                       </div>
                     </Button>
-                    <Button>
-                      <div
-                        className="modal-row"
-                        onClick={() => {
-                          setModalCreate(true);
-                        }}
-                      >
-                        Добавить ребенка
-                      </div>
-                    </Button>
-
+                    {selectedItem.hasOwnProperty("parent") && (
+                      <Button>
+                        <div
+                          className="modal-row"
+                          onClick={() => {
+                            setModalCreate(true);
+                          }}
+                        >
+                          Добавить ребенка
+                        </div>
+                      </Button>
+                    )}
                     {selectedItem.hasOwnProperty("spouses") ? (
                       !selectedItem.spouses[0] && (
                         <Button>
@@ -604,7 +696,12 @@ const TreePage = observer(() => {
         <div>
           {selectedItem && (
             <Container fluid>
-              <Form className="modal-inner modal-inner_form">
+              <Form
+                noValidate
+                validated={validated}
+                onSubmit={handleSubmit}
+                className="modal-inner modal-inner_form"
+              >
                 <Form.Group className=" modal-row" controlId="formBasicEmail">
                   <Form.Label>Фото</Form.Label>
                   <UploadAvatar setFile={setFile}></UploadAvatar>
@@ -712,7 +809,11 @@ const TreePage = observer(() => {
                   />
                 </Form.Group>
 
-                <Button className="modal-row" onClick={changeDevice}>
+                <Button
+                  type="submit"
+                  className="modal-row"
+                  onClick={changeDevice}
+                >
                   Сохранить
                 </Button>
               </Form>
@@ -721,17 +822,16 @@ const TreePage = observer(() => {
         </div>
       </Modal>
 
-      <Modal
-        noValidate
-        validated={validated}
-        onSubmit={handleSubmit}
-        active={modalCreate}
-        setActive={setModalCreate}
-      >
+      <Modal active={modalCreate} setActive={setModalCreate}>
         <div>
           {selectedItem && (
             <Container fluid>
-              <Form className="modal-inner modal-inner_form">
+              <Form
+                noValidate
+                validated={validated}
+                onSubmit={handleSubmit}
+                className="modal-inner modal-inner_form"
+              >
                 <Form.Group className=" modal-row" controlId="formBasicEmail">
                   <Form.Label>Фото</Form.Label>
                   <UploadAvatar setFile={setFile}></UploadAvatar>
@@ -849,7 +949,38 @@ const TreePage = observer(() => {
                 <Button
                   type="submit"
                   className="modal-row"
-                  onClick={createDevice}
+                  onClick={(e) => {
+                    console.log("selectedItem");
+                    console.log(selectedItem);
+                    if (spouse) {
+                        console.log(spouse)
+                      setForm({
+                        personId:selectedItem.id,
+                        name: createItem.name,
+                        surname: createItem.surname,
+                        patr: createItem.patr,
+                        sex: createItem.sex,
+                        dateOfBirthday: createItem.dateOfBirthday,
+                        personId: selectedItem.id,
+                        dateOfDeath: createItem.dateOfDeath,
+                        img: file,
+                      });
+                    } else {
+                   
+                      setForm(true);
+                      {
+                        // name: createItem.name,
+                        // surname: createItem.surname,
+                        // patr: createItem.patr,
+                        // sex: createItem.sex,
+                        // dateOfBirthday: createItem.dateOfBirthday,
+                        // parent: createItem.parent,
+                        // familyId: createItem.familyId,
+                        // dateOfDeath: createItem.dateOfDeath,
+                        // img: file,
+                      }
+                    }
+                  }}
                 >
                   Создать
                 </Button>
@@ -860,15 +991,26 @@ const TreePage = observer(() => {
       </Modal>
 
       <Container fluid="xxl">
-        <Row>
-          {tree&&<h1>Дерево:{tree.name}</h1>}
-        </Row>
+        <Row>{tree && <h1>Дерево:{tree.name}</h1>}</Row>
       </Container>
-      <Row className="d-flex flex-column m-3">
-        <div className="class_b">
-          <div id="details"></div>
-        </div>
-      </Row>
+      <div className="container-tree">
+        <Row className="my-cont d-flex flex-column m-3">
+          <div className="class_b-container">
+            <div id="container-drag" className="container-drag">
+              <TransformWrapper
+                minScale={0}
+                maxScale={3}
+                initialScale={1}
+                panning={{
+                  disabled: true,
+                }}
+              >
+                <TransformComponent></TransformComponent>
+              </TransformWrapper>
+            </div>
+          </div>
+        </Row>
+      </div>
     </Container>
   );
 });

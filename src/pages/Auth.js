@@ -8,7 +8,7 @@ import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from "../utils/consts";
 import { login, registration } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
-
+import Loader from "../components/Loader/Loader"
 const Auth = observer(() => {
   const { user } = useContext(Context);
   const location = useLocation();
@@ -19,7 +19,7 @@ const Auth = observer(() => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [validated, setValidated] = useState(false);
-
+  const [loading,setLoading]=useState(false)
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -31,6 +31,7 @@ const Auth = observer(() => {
   };
   const click = async () => {
     try {
+      setLoading(true)
       let data;
       if (isLogin) {
         data = await login(email, password);
@@ -43,15 +44,20 @@ const Auth = observer(() => {
       user.setUser(user);
       user.setRole(data.userData.role);
       user.setIsAuth(true);
+      user.setName(data.userData.name);
+      user.setSurname(data.userData.surname);
       history(SHOP_ROUTE);
-      window.location.reload();
+     //window.location.reload();
     } catch (e) {
       alert(e.response.data.message);
+      setLoading(false)
     }
   };
 
   return (
-    <Container
+    <>
+    {
+      loading?<Loader></Loader>:    <Container
       className="d-flex justify-content-center align-items-center"
       style={{ height: window.innerHeight - 54 }}
     >
@@ -116,6 +122,9 @@ const Auth = observer(() => {
         </Form>
       </Card>
     </Container>
+    }
+
+    </>
   );
 });
 

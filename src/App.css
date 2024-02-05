@@ -23,11 +23,21 @@ line {
   height: 2px;
   stroke-width: 2;
 }
-
+.button-panel{
+  margin-left: 8px;
+  gap: 20px;
+}
 path {
   fill: none;
   stroke: silver;
   stroke-width: 2;
+}
+.container-drag {
+  border: 3px solid gray;
+  width: calc(96vw);
+  height: calc(100vh - 176px);
+  cursor: grab;
+  overflow: auto;
 }
 .modal-row {
   font-size: 24px;
@@ -64,6 +74,9 @@ path {
   gap: 20px;
 
 }
+.inside-title{
+  margin-left: 20px;
+}
 .family-tree-card {
   display: flex;
   justify-content: center;
@@ -74,7 +87,6 @@ path {
 }
 .family-create-button {
   width: 260px;
-  margin-left: 20px;
 }
 .tree-card {
 }
@@ -110,11 +122,17 @@ text {
   visibility: hidden;
 }
 
-.class_b {
+.transform-component-module_content__FBWxo {
   overflow: auto;
+  width: calc(96vw);
   height: calc(100vh - 176px);
-  border: 3px solid gray;
 }
+.class_b-container {
+
+
+}
+
+
 /* .change{
   display: none;
   opacity: 0 ;

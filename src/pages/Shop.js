@@ -13,24 +13,38 @@ import Modal from "../Modal/Modal";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { getUser } from "../http/userAPI";
-import { fetchFamilies, createFamily } from "../http/deviceAPI";
+import {
+  fetchFamilies,
+  createFamily,
+  fetchOneFamily,
+  putFamily,
+  delFamily,
+} from "../http/deviceAPI";
 import Pages from "../components/Pages";
 import React, { useContext, useEffect, useState } from "react";
 
 import "../App.css";
 import { useNavigate } from "react-router-dom";
-import { DEVICE_ROUTE, FAMILY,USERS } from "../utils/consts";
-
+import { DEVICE_ROUTE, FAMILY, USERS } from "../utils/consts";
+import Loader from "../components/Loader/Loader";
 const Shop = observer(() => {
-  const {user} = useContext(Context)
+  const { user } = useContext(Context);
   const [modalCreate, setModalCreate] = useState(false);
+  const [viewParam, setViewParam] = useState(false);
   const history = useNavigate();
-  const [items, setItems] = useState(null);
+  const [items, setItems] = useState(false);
+  const [changeItem, setChangeItem] = useState({});
+  const [modal, setModal] = useState(false);
   const [createItem, setCreateItem] = useState({});
   const [validated, setValidated] = useState(false);
   const [file, setFile] = useState(null);
   const [userData, setUserData] = useState(undefined);
   const [myUsers, setMyUsers] = useState(null);
+  const [modalChange, setModalChange] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [form, setForm] = useState(false);
+  const [formChange, setFormChange] = useState(false);
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -52,8 +66,7 @@ const Shop = observer(() => {
     });
   }, []);
   useEffect(() => {
-   console.log(user)
-
+    console.log(user);
   }, []);
   useEffect(() => {
     if (items) {
@@ -65,6 +78,7 @@ const Shop = observer(() => {
       myItems.forEach((i) => {});
     }
   }, [items]);
+
   useEffect(() => {
     if (myUsers) {
       let myItems = document.querySelectorAll(".family-owner");
@@ -81,23 +95,24 @@ const Shop = observer(() => {
     console.log(createItem);
   }, [createItem]);
 
+  useEffect(() => {
+    console.log(createItem);
+  }, [createItem]);
+
+  useEffect(() => {
+    if (form) {
+      createTree();
+    }
+  }, [form]);
+  useEffect(() => {
+    if (formChange) {
+      console.log(formChange);
+      changeFamily();
+    }
+  }, [formChange]);
+
   const createTree = () => {
     try {
-      const formData = new FormData();
-      formData.append("userId", createItem.userId);
-      formData.append("namePerson", createItem.namePerson);
-      formData.append("name", createItem.name);
-      formData.append("surname", createItem.surname);
-      formData.append("patr", createItem.patr);
-      formData.append("sex", createItem.sex);
-      formData.append("dateOfBirthday", createItem.dateOfBirthday);
-      formData.append("public_tree", createItem.public_tree);
-      if (createItem.dateOfDeath)
-        formData.append("dateOfDeath", createItem.dateOfDeath);
-      formData.append("img", file);
-      console.log(formData);
-      console.log(createItem);
-
       if (
         createItem.dateOfBirthday &&
         createItem.sex &&
@@ -107,21 +122,48 @@ const Shop = observer(() => {
         createItem.userId &&
         createItem.public_tree
       ) {
-        createFamily(formData).then((data) => {
+        createFamily(form).then((data) => {
           console.log(data);
-          setItems(data);
-          //window.location.reload();
+          //setItems(data);
+          window.location.reload();
         });
       }
     } catch (e) {
       console.error(e);
     }
   };
+
+  const deleteFamily = () => {
+    try {
+      console.log(selectedItem.id);
+      delFamily(selectedItem.id).then((data) => {
+        if (data != "1") {
+          if (data.includes("нельзя")) {
+            alert(data);
+          }
+        } else {
+          window.location.reload();
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const changeFamily = () => {
+    try {
+      putFamily(selectedItem.id, formChange).then((data) => {
+        console.log(data);
+        window.location.reload();
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <Container fluid="xxl" className="mt-3">
       <Modal
-        noValidate
-        validated={validated}
         onSubmit={handleSubmit}
         active={modalCreate}
         setActive={setModalCreate}
@@ -129,7 +171,11 @@ const Shop = observer(() => {
         <div className="modal-inner">
           {
             <Container fluid>
-              <Form className="modal-inner modal-inner_form">
+              <Form
+                noValidate
+                validated={validated}
+                className="modal-inner modal-inner_form"
+              >
                 <Form.Group className=" modal-row" controlId="formBasicEmail">
                   <Form.Label>Название дерева</Form.Label>
                   <Form.Control
@@ -300,7 +346,21 @@ const Shop = observer(() => {
                 <Button
                   type="submit"
                   className="modal-row"
-                  onClick={createTree}
+                  onClick={(e) => {
+                    this.handleSubmit(e);
+                    setForm({
+                      userId: createItem.userId,
+                      namePerson: createItem.namePerson,
+                      name: createItem.name,
+                      surname: createItem.surname,
+                      patr: createItem.patr,
+                      sex: createItem.sex,
+                      dateOfBirthday: createItem.dateOfBirthday,
+                      dateOfDeath: createItem.dateOfDeath,
+                      public_tree: createItem.public_tree,
+                      img: file,
+                    });
+                  }}
                 >
                   Создать
                 </Button>
@@ -309,67 +369,267 @@ const Shop = observer(() => {
           }
         </div>
       </Modal>
+      <Modal zIndex={"100"} active={modalChange} setActive={setModalChange}>
+        <div>
+          {selectedItem && (
+            <Container fluid>
+              <Form className="modal-inner modal-inner_form">
+                <Form.Label className=" modal-row">
+                  Дерево: {selectedItem.name}
+                </Form.Label>
+                <Form.Group className=" modal-row" controlId="formBasicEmail">
+                  <Form.Label>Название дерева</Form.Label>
+                  <Form.Control
+                    placeholder="Название дерева"
+                    value={changeItem.name}
+                    onChange={(e) =>
+                      setChangeItem((prevState) => ({
+                        ...prevState,
+                        name: e.target.value,
+                      }))
+                    }
+                  />
+                </Form.Group>
+                <Form.Group className=" modal-row" controlId="formBasicEmail">
+                  <Form.Label>Публичное дерево</Form.Label>
+                  <Form.Group className=" modal-row" controlId="formBasicEmail">
+                    <Form.Check
+                      required
+                      defaultChecked={true}
+                      inline
+                      type="radio"
+                      label="Публичный"
+                      checked={changeItem.public_tree + "" == "true"}
+                      name="inlineRadioOptions"
+                      value={"true"}
+                      id="inlineRadio1"
+                      onChange={(e) =>
+                        setChangeItem((prevState) => ({
+                          ...prevState,
+                          public_tree: e.target.value,
+                        }))
+                      }
+                    />
+                    <Form.Check
+                      required
+                      defaultChecked={true}
+                      inline
+                      type="radio"
+                      label="Приватный"
+                      checked={changeItem.public_tree + "" == "false"}
+                      name="inlineRadioOptions"
+                      value={"false"}
+                      id="inlineRadio1"
+                      onChange={(e) =>
+                        setChangeItem((prevState) => ({
+                          ...prevState,
+                          public_tree: e.target.value,
+                        }))
+                      }
+                    />
+                  </Form.Group>
+                </Form.Group>
+                <Form.Group className=" modal-row" controlId="formBasicEmail">
+                  <Form.Label>Блокировать дерево</Form.Label>
+                  <Form.Group className=" modal-row" controlId="formBasicEmail">
+                    <Form.Check
+                      required
+                      defaultChecked={true}
+                      inline
+                      type="radio"
+                      label="Да"
+                      checked={changeItem.blocked + "" == "true"}
+                      name="inlineRadioOptions1"
+                      value={"true"}
+                      id="inlineRadio2"
+                      onChange={(e) =>
+                        setChangeItem((prevState) => ({
+                          ...prevState,
+                          blocked: e.target.value,
+                        }))
+                      }
+                    />
+                    <Form.Check
+                      required
+                      defaultChecked={true}
+                      inline
+                      type="radio"
+                      label="Нет"
+                      checked={changeItem.blocked + "" == "false"}
+                      name="inlineRadioOptions1"
+                      value={"false"}
+                      id="inlineRadio2"
+                      onChange={(e) =>
+                        setChangeItem((prevState) => ({
+                          ...prevState,
+                          blocked: e.target.value,
+                        }))
+                      }
+                    />
+                  </Form.Group>
+                </Form.Group>
 
-      <Row>
-        {/* <Button
-          variant="primary"
-          className="family-create-button modal-row"
-          onClick={() => setModalCreate(true)}
-        >
-          Добавить дерево
-        </Button> */}
-        {user.isAuth && (
-          <Button
-            variant="primary"
-            className="family-create-button modal-row"
-            onClick={() => history(FAMILY + "/" + userData.id)}
-          >
-            Мои деревья
-          </Button>
-        )}
-        {(user.role == "ADMIN") && (
-          <Button
-            variant="primary"
-            className="family-create-button modal-row"
-            onClick={() => history(USERS)}
-          >
-            Пользователи
-          </Button>
-        )}
-      </Row>
-      <Row>
-        {items && (
-          <div className="family-cards-inner">
-            {items.map((i) => (
-              i.public_tree&&
-              <Card className="family-tree-card">
-                <Card.Body className="card-body-tree">
-                  <Card.Title style={{ fontSize: "28px" }}>
-                    Дерево: {i.name}
-                  </Card.Title>
-                  <Card.Title style={{ fontSize: "18px" }}>
-                    Тип: {i.public_tree ? "публичное" : "приватное"}
-                  </Card.Title>
-                  <Card.Title
-                    className="family-owner"
-                    id={i.userId}
-                    style={{ fontSize: "18px" }}
-                  >
-                    владелец: {}
-                  </Card.Title>
-                  <Button
-                    className="family-card-button"
-                    variant="primary"
-                    onClick={() => history(DEVICE_ROUTE + "/" + i.id)}
-                  >
-                    Перейти к дереву
-                  </Button>
-                </Card.Body>
-              </Card>
-            ))}
-          </div>
-        )}
-      </Row>
+                <Button
+                  type="button"
+                  className="modal-row"
+                  onClick={() => {
+                    setFormChange({
+                      name: changeItem.name,
+                      public_tree: changeItem.public_tree,
+                      blocked: changeItem.blocked,
+                    });
+                  }}
+                >
+                  Сохранить
+                </Button>
+              </Form>
+            </Container>
+          )}
+        </div>
+      </Modal>
+
+      <Modal zIndex={"100"} active={modalDelete} setActive={setModalDelete}>
+        <div>
+          {selectedItem && (
+            <Container fluid>
+              <div className="modal-inner">
+                <div className="modal-row">
+                  <br></br>
+                  <span>
+                    Вы действительно хотите удалить дерево {selectedItem.name}?{" "}
+                  </span>
+                  <br></br>
+                </div>
+                <Button>
+                  <div className="modal-row" onClick={deleteFamily}>
+                    Удалить
+                  </div>
+                </Button>
+              </div>
+            </Container>
+          )}
+        </div>
+      </Modal>
+
+      <Modal active={modal} setActive={setModal}>
+        <div>
+          {selectedItem && (
+            <Container fluid>
+              <Form className="modal-inner modal-inner_form">
+                <Form.Label className=" modal-row">
+                  Дерево: {selectedItem.name}
+                </Form.Label>
+                {(user.isAuth && selectedItem.id == user.userId) ||
+                  (user.role == "ADMIN" && (
+                    <>
+                      <Button
+                        required
+                        className="modal-row"
+                        onClick={() => setModalDelete(true)}
+                      >
+                        Удалить
+                      </Button>
+                      <Button
+                        required
+                        className="modal-row"
+                        onClick={() => {
+                          console.log(selectedItem);
+                          setChangeItem(selectedItem);
+                          setModalChange(true);
+                        }}
+                      >
+                        Изменить
+                      </Button>
+                    </>
+                  ))}
+
+                <Button
+                  className="modal-row"
+                  onClick={() => history(DEVICE_ROUTE + "/" + selectedItem.id)}
+                >
+                  Перейти к дереву
+                </Button>
+              </Form>
+            </Container>
+          )}
+        </div>
+      </Modal>
+      {items ? (
+        <>
+          <Row className="button-panel">
+            {user.isAuth && (
+              <Button
+                variant="primary"
+                className="family-create-button modal-row"
+                onClick={() => history(FAMILY + "/" + userData.id)}
+              >
+                Мои деревья
+              </Button>
+            )}
+            {user.role == "ADMIN" && (
+              <>
+                <Button
+                  variant="primary"
+                  className="family-create-button modal-row"
+                  onClick={() => history(USERS)}
+                >
+                  Пользователи
+                </Button>
+                <Button
+                  variant="primary"
+                  className="family-create-button modal-row"
+                  onClick={() => setViewParam(!viewParam)}
+                >
+                  {viewParam ? "Публичные деревья" : "Все деревья"}
+                </Button>
+              </>
+            )}
+          </Row>
+          <Row>
+            
+            <div className="family-cards-inner">
+              {items.map(
+                (i) =>
+                  ((i.public_tree && !i.blocked) || viewParam) && (
+                    <Card className="family-tree-card">
+                      <Card.Body className="card-body-tree">
+                        <Card.Title style={{ fontSize: "28px" }}>
+                          Дерево: {i.name}
+                        </Card.Title>
+                        <Card.Title style={{ fontSize: "18px" }}>
+                          Тип: {i.public_tree ? "публичное" : "приватное"}
+                        </Card.Title>
+                        <Card.Title style={{ fontSize: "18px" }}>
+                          Заблокированное: {i.blocked ? "да" : "нет"}
+                        </Card.Title>
+                        <Card.Title
+                          className="family-owner"
+                          id={i.userId}
+                          style={{ fontSize: "18px" }}
+                        >
+                          владелец: {}
+                        </Card.Title>
+                        <Button
+                          className="family-card-button"
+                          variant="primary"
+                          onClick={() => {
+                            setSelectedItem(i);
+                            setModal(true);
+                          }}
+                        >
+                          Открыть
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  )
+              )}
+            </div>
+            
+          </Row>
+        </>
+      ) : (
+        <Loader myHeight={"calc(100vh - 176px)"}></Loader>
+      )}
     </Container>
   );
 });

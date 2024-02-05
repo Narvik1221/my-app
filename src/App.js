@@ -5,7 +5,7 @@ import NavBar from "./components/NavBar";
 import { observer } from "mobx-react-lite";
 import { Context } from "./index";
 import { check } from "./http/userAPI";
-import { Spinner } from "react-bootstrap";
+import Loader from "./components/Loader/Loader"
 import "./App.css";
 import "./reset.css";
 const App = observer(() => {
@@ -21,13 +21,15 @@ const App = observer(() => {
           user.setRole(JSON.parse(isAuth).role);
           user.setUser(true);
           user.setIsAuth(true);
+          user.setName(JSON.parse(isAuth).name);
+          user.setSurname(JSON.parse(isAuth).surname);
         }
       })
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
-    return <Spinner animation={"grow"} />;
+    return <Loader></Loader>;
   }
   return (
     <BrowserRouter>

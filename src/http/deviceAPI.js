@@ -25,7 +25,7 @@ export const changeSpouse = async (id,person) => {
     const {data} = await $authHost.put('api/family/spouse/' + id,person)
     return data
 }
-export const createPerson = async (person) => {
+export const createPerson = async (person,) => {
     const {data} = await $authHost.post('api/family/person',person)
     return data
 }
@@ -46,8 +46,8 @@ export const createFamily = async (person) => {
     const {data} = await $authHost.post('api/family/',person)
     return data
 }
-export const putFamily = async (id) => {
-    const {data} = await $authHost.put('api/family/'+id)
+export const putFamily = async (id,person) => {
+    const {data} = await $authHost.put('api/family/'+id,person)
     return data
 }
 export const delFamily = async (id) => {
