@@ -563,7 +563,7 @@ const Shop = observer(() => {
       <Row className="button-panel">
         <Button
           variant="primary"
-          className="family-create-button title-text"
+          className="family-create-button modal-row"
           onClick={() => setModalCreate(true)}
         >
           Добавить дерево

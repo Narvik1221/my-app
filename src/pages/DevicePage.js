@@ -52,6 +52,7 @@ const TreePage = observer(() => {
   const [userData, setUserData] = useState(false);
   const [form, setForm] = useState(false);
   const [file, setFile] = useState(null);
+  const [scrollCoords, setScrollCoords] = useState(null);
   const [validated, setValidated] = useState(false);
   const handleSubmit = (event) => {
     const form = event.currentTarget;
@@ -63,51 +64,57 @@ const TreePage = observer(() => {
     setValidated(true);
   };
   useEffect(() => {
-    const ele = document.getElementById("container-drag");
-    //panzoom(ele);
-    // Set initial scroll position
-
-    let pos = {
-      top: 0,
-      left: 0,
-      x: 0,
-      y: 0,
-    };
-
-    const mouseDownHandler = function (e) {
-      pos = {
-        top: ele.scrollTop,
-        left: ele.scrollLeft,
-        x: e.clientX,
-        y: e.clientY,
+    if (scrollCoords) {
+      console.log(scrollCoords.x.animVal.value)
+      console.log(scrollCoords.y.animVal.value)
+      let person=document.querySelectorAll("#person")
+      console.log(person);
+      const ele = document.getElementById("container-drag");
+      //panzoom(ele);
+      // Set initial scroll position
+      ele.scrollTo(scrollCoords.x.animVal.value*0.85, scrollCoords.y.animVal.value);
+      let pos = {
+        top: 0,
+        left: 0,
+        x: 0,
+        y: 0,
       };
 
-      document.addEventListener("mousemove", mouseMoveHandler);
-      document.addEventListener("mouseup", mouseUpHandler);
-    };
+      const mouseDownHandler = function (e) {
+        pos = {
+          top: ele.scrollTop,
+          left: ele.scrollLeft,
+          x: e.clientX,
+          y: e.clientY,
+        };
 
-    const mouseMoveHandler = function (e) {
-      const dx = e.clientX - pos.x;
-      const dy = e.clientY - pos.y;
+        document.addEventListener("mousemove", mouseMoveHandler);
+        document.addEventListener("mouseup", mouseUpHandler);
+      };
 
-      ele.scrollTop = pos.top - dy;
-      ele.scrollLeft = pos.left - dx;
-    };
+      const mouseMoveHandler = function (e) {
+        const dx = e.clientX - pos.x;
+        const dy = e.clientY - pos.y;
 
-    const mouseUpHandler = function () {
-      document.removeEventListener("mousemove", mouseMoveHandler);
-      document.removeEventListener("mouseup", mouseUpHandler);
+        ele.scrollTop = pos.top - dy;
+        ele.scrollLeft = pos.left - dx;
+      };
 
-      ele.style.cursor = "grab";
-      ele.style.removeProperty("user-select");
-    };
+      const mouseUpHandler = function () {
+        document.removeEventListener("mousemove", mouseMoveHandler);
+        document.removeEventListener("mouseup", mouseUpHandler);
 
-    ele.addEventListener("mousedown", function (event) {
-      ele.style.cursor = "grabbing";
-      ele.style.userSelect = "none";
-      mouseDownHandler(event);
-    });
-  }, []); //стартовая позиция окна
+        ele.style.cursor = "grab";
+        ele.style.removeProperty("user-select");
+      };
+
+      ele.addEventListener("mousedown", function (event) {
+        ele.style.cursor = "grabbing";
+        ele.style.userSelect = "none";
+        mouseDownHandler(event);
+      });
+    }
+  }, [scrollCoords]); //стартовая позиция окна
 
   useEffect(() => {
     fetchOneTree(id).then((data) => setTree(data));
@@ -327,7 +334,9 @@ const TreePage = observer(() => {
         .attr("id", function (d) {
           return d.data.id;
         })
-
+        .attr("id", function (d) {
+          return "person";
+        })
         .classed("tree-card", true)
         .attr("rx", "20")
         .attr("ry", "20");
@@ -374,10 +383,10 @@ const TreePage = observer(() => {
         })
         .classed("hide", function (d) {
           if (d.data.spouses[0]?.name == undefined) {
-            console.log(true);
+          
             return true;
           } else {
-            console.log(false);
+      
             return false;
           }
         });
@@ -439,7 +448,11 @@ const TreePage = observer(() => {
         .classed("bigger", true);
 
       let rects = document.querySelectorAll("rect");
-      console.log(rects);
+        console.log(rects[0])
+        setScrollCoords({
+          x:rects[0].x,
+          y:rects[0].y
+        })
       rects.forEach((r, index) => {
         r.addEventListener("click", (e) => {
           if (r.id.includes("spouse")) {
@@ -495,29 +508,28 @@ const TreePage = observer(() => {
   }, [selectedItem]);
   useEffect(() => {
     if (form) {
-      console.log(form)
+      console.log(form);
       createDevice();
     }
   }, [form]);
   const createDevice = () => {
     try {
-      let myFormData=new FormData()
-      myFormData.append('familyId', createItem.familyId)
-      myFormData.append('parent', createItem.parent)
-      myFormData.append('name', createItem.name)
-      myFormData.append('surname', createItem.surname)
-      if(createItem.patr)
-      myFormData.append('patr', createItem.patr)
-      myFormData.append('sex', createItem.sex)
-      myFormData.append('dateOfBirthday', createItem.dateOfBirthday)
-      if(createItem.dateOfDeath)
-      myFormData.append('dateOfDeath', createItem.dateOfDeath)
-      myFormData.append('img', file)
+      let myFormData = new FormData();
+      myFormData.append("familyId", createItem.familyId);
+      myFormData.append("parent", createItem.parent);
+      myFormData.append("name", createItem.name);
+      myFormData.append("surname", createItem.surname);
+      if (createItem.patr) myFormData.append("patr", createItem.patr);
+      myFormData.append("sex", createItem.sex);
+      myFormData.append("dateOfBirthday", createItem.dateOfBirthday);
+      if (createItem.dateOfDeath)
+        myFormData.append("dateOfDeath", createItem.dateOfDeath);
+      myFormData.append("img", file);
       console.log(form);
       console.log(createItem);
       console.log(createItem.dateOfBirthday);
       console.log(createItem.dateOfBirthday);
-      if ( myFormData.has('name')) {
+      if (myFormData.has("name")) {
         if (
           createItem.dateOfBirthday &&
           createItem.sex &&
@@ -533,7 +545,7 @@ const TreePage = observer(() => {
             });
           } else {
             createPerson(myFormData).then((data) => {
-              console.log( myFormData)
+              console.log(myFormData);
               console.log(data);
               //window.location.reload();
             });
@@ -953,9 +965,9 @@ const TreePage = observer(() => {
                     console.log("selectedItem");
                     console.log(selectedItem);
                     if (spouse) {
-                        console.log(spouse)
+                      console.log(spouse);
                       setForm({
-                        personId:selectedItem.id,
+                        personId: selectedItem.id,
                         name: createItem.name,
                         surname: createItem.surname,
                         patr: createItem.patr,
@@ -966,7 +978,6 @@ const TreePage = observer(() => {
                         img: file,
                       });
                     } else {
-                   
                       setForm(true);
                       {
                         // name: createItem.name,
