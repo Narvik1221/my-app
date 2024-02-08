@@ -700,7 +700,7 @@ const TreePage = observer(() => {
                     ) : (
                       <></>
                     )}
-                    <Button>
+                    {selectedItem.child!='0'?<Button>
                       <div
                         className="modal-row"
                         onClick={() => {
@@ -710,7 +710,8 @@ const TreePage = observer(() => {
                       >
                         Удалить
                       </div>
-                    </Button>
+                    </Button>:<></>}
+                    
                   </>
                 )}
               </div>
