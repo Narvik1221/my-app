@@ -34,7 +34,6 @@ path {
 }
 .container-drag {
   border: 3px solid gray;
-  width: calc(96vw);
   height: calc(100vh - 176px);
   cursor: grab;
   overflow: auto;
@@ -43,6 +42,9 @@ path {
   font-size: 24px;
   font-weight: 500;
   padding: 6px 0;
+}
+.blocked{
+  opacity: 0.6;
 }
 .title-text {
   font-size: 30px;

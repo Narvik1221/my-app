@@ -46,7 +46,7 @@ const Shop = observer(() => {
   const [myUsers, setMyUsers] = useState(null);
   const [modalChange, setModalChange] = useState(false);
   const [selectedItem, setSelectedItem] = useState(false);
- 
+
   const [form, setForm] = useState(false);
   const [formChange, setFormChange] = useState(false);
   const handleSubmit = (event) => {
@@ -581,6 +581,9 @@ const Shop = observer(() => {
                   </Card.Title>
                   <Card.Title style={{ fontSize: "18px" }}>
                     Тип: {i.public_tree ? "публичное" : "приватное"}
+                  </Card.Title>
+                  <Card.Title style={{ fontSize: "18px" }}>
+                    Заблокированное: {i.blocked ? "да" : "нет"}
                   </Card.Title>
                   <Card.Title
                     className="family-owner"

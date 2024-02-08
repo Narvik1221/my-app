@@ -33,6 +33,5 @@ export const getUser = async () => {
 };
 export const blockUser= async (id,blocked) => {
   const { data } = await $authHost.put("api/user/block", { id,blocked });
-  localStorage.setItem("token", data.token);
   return {  data};
 };

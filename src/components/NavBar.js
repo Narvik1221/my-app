@@ -47,7 +47,7 @@ const NavBar = observer(() => {
         }}
       >
         <NavLink
-          style={{ color: "white", fontSize: "30px", paddingLeft: "8px" }}
+          style={{ color: "white", fontSize: "30px", padding: "0 8px" }}
           to={SHOP_ROUTE}
         >
           FAMILY_TREE
@@ -61,28 +61,19 @@ const NavBar = observer(() => {
               display: "flex",
               alignItems: "center",
               paddingLeft: "8px",
+              flexWrap:"wrap"
             }}
           >
+            <div    style={{
+              gap: "12px",
+              display: "flex",
+              alignItems: "center",
+            }}>
             <span className="modal-row">{"Пользователь: "}</span>
             <span className="modal-row">{user.name}</span>
             <span className="modal-row">{user.surname}</span>
-
-            {/* <div
-              style={{ cursor: "pointer", height: "40px" }}
-              onClick={() => history(BASKET_ROUTE)}
-            >
-              <Image
-                style={{ scale: "0.6", marginTop: "-12px" }}
-                src={basket}
-              />
-            </div> */}
-
-            {/* <Button
-              variant={"outline-light"}
-              onClick={() => history(ADMIN_ROUTE)}
-            >
-              Админ панель
-            </Button> */}
+            </div>
+          
             <Button
               variant={"outline-light"}
               onClick={() => logOut()}

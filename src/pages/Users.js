@@ -66,7 +66,7 @@ const Shop = () => {
                 <div className="modal-row">
                   <br></br>
                   <span>
-                    Вы действительно хотите заблокировать {selectedItem.name}{" "}
+                    Вы действительно хотите {selectedItem.blocked?"разблокировать ":"заблокировать "}{selectedItem.name}{" "}
                     {selectedItem.surname}?{" "}
                   </span>
                   <br></br>
@@ -123,7 +123,11 @@ const Shop = () => {
         {items ? (
           <div className="family-cards-inner">
             {items.map((i) => (
-              <Card className="family-tree-card">
+              <Card
+                className={
+                  i.blocked ? "family-tree-card blocked" : "family-tree-card "
+                }
+              >
                 <Card.Body className="card-body-tree">
                   <Card.Title style={{ fontSize: "28px" }}>
                     Имя: {i.name}
@@ -140,16 +144,29 @@ const Shop = () => {
                   <Card.Title style={{ fontSize: "18px" }}>
                     Заблокирован: {i.blocked ? "Да" : "Нет"}
                   </Card.Title>
-                  <Button
-                    className="family-card-button"
-                    variant="primary"
-                    onClick={() => {
-                      setSelectedItem(i);
-                      setModal(true);
-                    }}
-                  >
-                   Открыть
-                  </Button>
+                  {i.blocked ? (
+                    <Button
+                      className="family-card-button"
+                      variant="primary"
+                      onClick={() => {
+                        setSelectedItem(i);
+                        setModalDelete(true)
+                      }}
+                    >
+                      Разблокировать
+                    </Button>
+                  ) : (
+                    <Button
+                      className="family-card-button"
+                      variant="primary"
+                      onClick={() => {
+                        setSelectedItem(i);
+                        setModal(true);
+                      }}
+                    >
+                      Открыть
+                    </Button>
+                  )}
                 </Card.Body>
               </Card>
             ))}
