@@ -285,7 +285,7 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return process.env.REACT_APP_API_URL+d.data.img;
+            return 'https://res.cloudinary.com/dlmr1ru52/image/upload/'+d.data.img;
           })
           .classed("img-card", true)
       );
@@ -305,7 +305,7 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return process.env.REACT_APP_API_URL + d.data.spouses[0]?.img;
+            return 'https://res.cloudinary.com/dlmr1ru52/image/upload/' + d.data.spouses[0]?.img;
           })
           .classed("img-card", true)
           .classed("hide", function (d) {
@@ -625,7 +625,7 @@ const TreePage = observer(() => {
                   className="image-modal"
                   width={300}
                   height={300}
-                  src={process.env.REACT_APP_API_URL + selectedItem.img}
+                  src={'https://res.cloudinary.com/dlmr1ru52/image/upload/' + selectedItem.img}
                 />
                 <div className="modal-row">
                   <span>Имя: </span>
