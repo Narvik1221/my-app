@@ -2,7 +2,10 @@ import {$authHost, $host} from "./index";
 import jwt_decode from "jwt-decode";
 
 
-
+export const blockUser= async (id,blocked) => {
+    const {data} = await $authHost.put('api/family/block' ,{ id,blocked })
+    return data
+  };
 
 export const fetchFamilies = async () => {
     const {data} = await $host.get('api/family/')
