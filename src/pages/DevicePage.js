@@ -18,6 +18,8 @@ import {
 import Form from "react-bootstrap/Form";
 import UploadAvatar from "../components/UploadAvatar";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
 const TreePage = observer(() => {
   const { user } = useContext(Context);
   const [tree, setTree] = useState(false);
@@ -54,6 +56,7 @@ const TreePage = observer(() => {
   const [file, setFile] = useState(null);
   const [scrollCoords, setScrollCoords] = useState(null);
   const [validated, setValidated] = useState(false);
+  const [cImg, setCimg] = useState(false);
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -65,14 +68,17 @@ const TreePage = observer(() => {
   };
   useEffect(() => {
     if (scrollCoords) {
-      console.log(scrollCoords.x.animVal.value)
-      console.log(scrollCoords.y.animVal.value)
-      let person=document.querySelectorAll("#person")
+      console.log(scrollCoords.x.animVal.value);
+      console.log(scrollCoords.y.animVal.value);
+      let person = document.querySelectorAll("#person");
       console.log(person);
       const ele = document.getElementById("container-drag");
       //panzoom(ele);
       // Set initial scroll position
-      ele.scrollTo(scrollCoords.x.animVal.value*0.85, scrollCoords.y.animVal.value);
+      ele.scrollTo(
+        scrollCoords.x.animVal.value * 0.85,
+        scrollCoords.y.animVal.value
+      );
       let pos = {
         top: 0,
         left: 0,
@@ -117,8 +123,10 @@ const TreePage = observer(() => {
   }, [scrollCoords]); //стартовая позиция окна
 
   useEffect(() => {
+    //let img = cld.image("sample");
     fetchOneTree(id).then((data) => setTree(data));
   }, []);
+
   useEffect(() => {
     if (tree) {
       const counts = {};
@@ -195,6 +203,7 @@ const TreePage = observer(() => {
       } catch (e) {
         console.error(e);
       }
+      
     }
   }, [data]);
   useEffect(() => {
@@ -276,7 +285,7 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return process.env.REACT_APP_API_URL + "/" + d.data.img;
+            return process.env.REACT_APP_API_URL+d.data.img;
           })
           .classed("img-card", true)
       );
@@ -296,7 +305,7 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return process.env.REACT_APP_API_URL + "/" + d.data.spouses[0]?.img;
+            return process.env.REACT_APP_API_URL + d.data.spouses[0]?.img;
           })
           .classed("img-card", true)
           .classed("hide", function (d) {
@@ -383,10 +392,8 @@ const TreePage = observer(() => {
         })
         .classed("hide", function (d) {
           if (d.data.spouses[0]?.name == undefined) {
-          
             return true;
           } else {
-      
             return false;
           }
         });
@@ -448,11 +455,11 @@ const TreePage = observer(() => {
         .classed("bigger", true);
 
       let rects = document.querySelectorAll("rect");
-        console.log(rects[0])
-        setScrollCoords({
-          x:rects[0].x,
-          y:rects[0].y
-        })
+      console.log(rects[0]);
+      setScrollCoords({
+        x: rects[0].x,
+        y: rects[0].y,
+      });
       rects.forEach((r, index) => {
         r.addEventListener("click", (e) => {
           if (r.id.includes("spouse")) {
@@ -547,7 +554,7 @@ const TreePage = observer(() => {
             createPerson(myFormData).then((data) => {
               console.log(myFormData);
               console.log(data);
-              //window.location.reload();
+              window.location.reload();
             });
           }
         }
@@ -583,6 +590,7 @@ const TreePage = observer(() => {
       console.error(e);
     }
   };
+
   return (
     <Container fluid className="mt-3">
       <Modal active={modalDelete} setActive={setModalDelete}>
@@ -617,7 +625,7 @@ const TreePage = observer(() => {
                   className="image-modal"
                   width={300}
                   height={300}
-                  src={process.env.REACT_APP_API_URL + "/" + selectedItem.img}
+                  src={process.env.REACT_APP_API_URL + selectedItem.img}
                 />
                 <div className="modal-row">
                   <span>Имя: </span>
@@ -1003,14 +1011,19 @@ const TreePage = observer(() => {
 
       <Container fluid="xxl">
         <Row>{tree && <h1>Дерево:{tree.name}</h1>}</Row>
+        {/* {cImg && (
+          <>
+            <AdvancedImage cldImg={cImg} />
+          </>
+        )} */}
       </Container>
       <div className="container-tree">
         <Row className="my-cont d-flex flex-column m-3">
           <div className="class_b-container">
             <div id="container-drag" className="container-drag">
               <TransformWrapper
-                minScale={0}
-                maxScale={3}
+                minScale={0.3}
+                maxScale={1.5}
                 initialScale={1}
                 panning={{
                   disabled: true,
