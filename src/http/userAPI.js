@@ -31,3 +31,9 @@ export const getUser = async () => {
   const { data } = await $host.get("api/user/");
   return { data};
 };
+export const blockUser= async (id,blocked) => {
+  const { data } = await $host.put("api/user/block", { id,blocked });
+
+  localStorage.setItem("token", data.token);
+  return { token: jwtDecode(data.token), userData: data.user };
+};

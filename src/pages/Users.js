@@ -11,7 +11,7 @@ import UploadAvatar from "../components/UploadAvatar";
 import Modal from "../Modal/Modal";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import { getUser } from "../http/userAPI";
+import { getUser, blockUser } from "../http/userAPI";
 import Pages from "../components/Pages";
 import React, { useContext, useEffect, useState } from "react";
 import "../App.css";
@@ -27,7 +27,9 @@ const Shop = () => {
   const [file, setFile] = useState(null);
   const [userData, setUserData] = useState(undefined);
   const [myUsers, setMyUsers] = useState(null);
-
+  const [modal, setModal] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(false);
   useEffect(() => {
     let myUser = localStorage.getItem("userData");
     setUserData(JSON.parse(myUser));
@@ -43,9 +45,77 @@ const Shop = () => {
       }
     });
   }, []);
-
+  const blockUserHandle = () => {
+    try {
+      console.log(selectedItem.id);
+      blockUser(selectedItem.id, !selectedItem.blocked).then((data) => {
+        console.log(data);
+        window.location.reload();
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
   return (
     <Container fluid="xxl" className="mt-3">
+      <Modal zIndex={"100"} active={modalDelete} setActive={setModalDelete}>
+        <div>
+          {selectedItem && (
+            <Container fluid>
+              <div className="modal-inner">
+                <div className="modal-row">
+                  <br></br>
+                  <span>
+                    Вы действительно хотите заблокировать {selectedItem.name}{" "}
+                    {selectedItem.surname}?{" "}
+                  </span>
+                  <br></br>
+                </div>
+                <Button>
+                  <div className="modal-row" onClick={blockUserHandle}>
+                    Да
+                  </div>
+                </Button>
+              </div>
+            </Container>
+          )}
+        </div>
+      </Modal>
+
+      <Modal active={modal} setActive={setModal}>
+        <div>
+          {selectedItem && (
+            <Container fluid>
+              <Form className="modal-inner modal-inner_form">
+                <Form.Label className=" modal-row">
+                  Пользователь: {selectedItem.name} {selectedItem.surname}
+                </Form.Label>
+
+                <Button
+                  className="modal-row"
+                  onClick={() => setModalDelete(true)}
+                >
+                  Заблокировать
+                </Button>
+                <Button
+                  className="modal-row"
+                  onClick={() =>
+                    history(FAMILY + "/" + selectedItem.id, {
+                      state: {
+                        ID: selectedItem.id,
+                        NAME: selectedItem.name,
+                        SURNAME: selectedItem.surname,
+                      },
+                    })
+                  }
+                >
+                  Перейти к дереву
+                </Button>
+              </Form>
+            </Container>
+          )}
+        </div>
+      </Modal>
       <Row>
         <h1 className="inside-title title-text">Пользователи</h1>
       </Row>
@@ -67,21 +137,18 @@ const Shop = () => {
                   <Card.Title style={{ fontSize: "18px" }}>
                     Роль: {i.email}
                   </Card.Title>
-
+                  <Card.Title style={{ fontSize: "18px" }}>
+                    Заблокирован: {i.blocked ? "Да" : "Нет"}
+                  </Card.Title>
                   <Button
                     className="family-card-button"
                     variant="primary"
-                    onClick={() =>
-                      history(FAMILY + "/" + i.id, {
-                        state: {
-                          ID: i.id,
-                          NAME: i.name,
-                          SURNAME: i.surname,
-                        },
-                      })
-                    }
+                    onClick={() => {
+                      setSelectedItem(i);
+                      setModal(true);
+                    }}
                   >
-                    Деревья
+                   Открыть
                   </Button>
                 </Card.Body>
               </Card>

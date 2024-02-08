@@ -34,6 +34,7 @@ const Shop = observer(() => {
   const { state } = useLocation();
   const { navigateId } = state != null ? state : "";
   const [modal, setModal] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
   const [modalCreate, setModalCreate] = useState(false);
   const history = useNavigate();
   const [items, setItems] = useState(false);
@@ -45,7 +46,7 @@ const Shop = observer(() => {
   const [myUsers, setMyUsers] = useState(null);
   const [modalChange, setModalChange] = useState(false);
   const [selectedItem, setSelectedItem] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
+ 
   const [form, setForm] = useState(false);
   const [formChange, setFormChange] = useState(false);
   const handleSubmit = (event) => {

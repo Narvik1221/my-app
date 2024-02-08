@@ -203,7 +203,6 @@ const TreePage = observer(() => {
       } catch (e) {
         console.error(e);
       }
-      
     }
   }, [data]);
   useEffect(() => {
@@ -285,7 +284,9 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return 'https://res.cloudinary.com/dlmr1ru52/image/upload/'+d.data.img;
+            return (
+              "https://res.cloudinary.com/dlmr1ru52/image/upload/" + d.data.img
+            );
           })
           .classed("img-card", true)
       );
@@ -305,7 +306,10 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return 'https://res.cloudinary.com/dlmr1ru52/image/upload/' + d.data.spouses[0]?.img;
+            return (
+              "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+              d.data.spouses[0]?.img
+            );
           })
           .classed("img-card", true)
           .classed("hide", function (d) {
@@ -503,7 +507,6 @@ const TreePage = observer(() => {
         changePerson(selectedItem.id, formData).then((data) => {
           console.log(data);
           window.location.reload();
-          //window.location.reload()
         });
       }
     } catch (e) {
@@ -625,7 +628,10 @@ const TreePage = observer(() => {
                   className="image-modal"
                   width={300}
                   height={300}
-                  src={'https://res.cloudinary.com/dlmr1ru52/image/upload/' + selectedItem.img}
+                  src={
+                    "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+                    selectedItem.img
+                  }
                 />
                 <div className="modal-row">
                   <span>Имя: </span>
@@ -986,18 +992,17 @@ const TreePage = observer(() => {
                         img: file,
                       });
                     } else {
-                      setForm(true);
-                      {
-                        // name: createItem.name,
-                        // surname: createItem.surname,
-                        // patr: createItem.patr,
-                        // sex: createItem.sex,
-                        // dateOfBirthday: createItem.dateOfBirthday,
-                        // parent: createItem.parent,
-                        // familyId: createItem.familyId,
-                        // dateOfDeath: createItem.dateOfDeath,
-                        // img: file,
-                      }
+                      setForm({
+                        name: createItem.name,
+                        surname: createItem.surname,
+                        patr: createItem.patr,
+                        sex: createItem.sex,
+                        dateOfBirthday: createItem.dateOfBirthday,
+                        parent: createItem.parent,
+                        familyId: createItem.familyId,
+                        dateOfDeath: createItem.dateOfDeath,
+                        img: file,
+                      });
                     }
                   }}
                 >
