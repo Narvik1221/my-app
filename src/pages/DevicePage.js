@@ -15,12 +15,14 @@ import {
   deletePerson,
   deleteSpouse,
 } from "../http/deviceAPI";
+import { useLocation } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import UploadAvatar from "../components/UploadAvatar";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 const TreePage = observer(() => {
+  const BLOCKED = useLocation().state?.BLOCKED;
   const { user } = useContext(Context);
   const [tree, setTree] = useState(false);
   const { id } = useParams();
@@ -123,7 +125,7 @@ const TreePage = observer(() => {
   }, [scrollCoords]); //стартовая позиция окна
 
   useEffect(() => {
-    //let img = cld.image("sample");
+    if(!BLOCKED && BLOCKED!=undefined)
     fetchOneTree(id).then((data) => setTree(data));
   }, []);
 
@@ -595,453 +597,508 @@ const TreePage = observer(() => {
   };
 
   return (
-    <Container fluid className="mt-3">
-      <Modal active={modalDelete} setActive={setModalDelete}>
-        <div>
-          {selectedItem && (
-            <Container fluid>
-              <div className="modal-inner">
-                <div className="modal-row">
-                  <br></br>
-                  <span>Вы действительно хотите удалить? </span>
-                  <br></br>
-                  {selectedItem.name + " "}
-                  {selectedItem.surname}
-                </div>
-                <Button>
-                  <div className="modal-row" onClick={deleteDevice}>
-                    Удалить
-                  </div>
-                </Button>
-              </div>
-            </Container>
-          )}
-        </div>
-      </Modal>
-
-      <Modal active={modal} setActive={setModal}>
-        <div>
-          {selectedItem && (
-            <Container fluid>
-              <div className="modal-inner">
-                <Image
-                  className="image-modal"
-                  width={300}
-                  height={300}
-                  src={
-                    "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
-                    selectedItem.img
-                  }
-                />
-                <div className="modal-row">
-                  <span>Имя: </span>
-                  {selectedItem.name}
-                </div>
-                <div className="modal-row">
-                  <span>Фамилия: </span>
-                  {selectedItem.surname}
-                </div>
-                <div className="modal-row">
-                  <span>Отчество: </span>
-                  {selectedItem.patr}
-                </div>
-                <div className="modal-row">
-                  <span>Пол: </span>
-                  {selectedItem.sex}
-                </div>
-                <div className="modal-row">
-                  <span>Дата рождения: </span>
-                  {selectedItem.dateOfBirthday}
-                </div>
-                <div className="modal-row">
-                  <span>Дата смерти: </span>
-                  {selectedItem.dateOfDeath}
-                </div>
-                {(userData.role == "ADMIN" ||
-                  (user.isAuth && tree.userId == userData.id)) && (
-                  <>
+    <>
+      {!BLOCKED&& BLOCKED!=undefined? (
+        <Container fluid className="mt-3">
+          <Modal active={modalDelete} setActive={setModalDelete}>
+            <div>
+              {selectedItem && (
+                <Container fluid>
+                  <div className="modal-inner">
+                    <div className="modal-row">
+                      <br></br>
+                      <span>Вы действительно хотите удалить? </span>
+                      <br></br>
+                      {selectedItem.name + " "}
+                      {selectedItem.surname}
+                    </div>
                     <Button>
-                      <div
-                        className="modal-row"
-                        onClick={() => {
-                          setChangeItem(selectedItem);
-                          setModalChange(true);
-                        }}
-                      >
-                        Изменить
+                      <div className="modal-row" onClick={deleteDevice}>
+                        Удалить
                       </div>
                     </Button>
-                    {selectedItem.hasOwnProperty("parent") && (
-                      <Button>
-                        <div
-                          className="modal-row"
-                          onClick={() => {
-                            setModalCreate(true);
-                          }}
-                        >
-                          Добавить ребенка
-                        </div>
-                      </Button>
-                    )}
-                    {selectedItem.hasOwnProperty("spouses") ? (
-                      !selectedItem.spouses[0] && (
+                  </div>
+                </Container>
+              )}
+            </div>
+          </Modal>
+
+          <Modal active={modal} setActive={setModal}>
+            <div>
+              {selectedItem && (
+                <Container fluid>
+                  <div className="modal-inner">
+                    <Image
+                      className="image-modal"
+                      width={300}
+                      height={300}
+                      src={
+                        "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+                        selectedItem.img
+                      }
+                    />
+                    <div className="modal-row">
+                      <span>Имя: </span>
+                      {selectedItem.name}
+                    </div>
+                    <div className="modal-row">
+                      <span>Фамилия: </span>
+                      {selectedItem.surname}
+                    </div>
+                    <div className="modal-row">
+                      <span>Отчество: </span>
+                      {selectedItem.patr}
+                    </div>
+                    <div className="modal-row">
+                      <span>Пол: </span>
+                      {selectedItem.sex}
+                    </div>
+                    <div className="modal-row">
+                      <span>Дата рождения: </span>
+                      {selectedItem.dateOfBirthday}
+                    </div>
+                    <div className="modal-row">
+                      <span>Дата смерти: </span>
+                      {selectedItem.dateOfDeath}
+                    </div>
+                    {(userData.role == "ADMIN" ||
+                      (user.isAuth && tree.userId == userData.id)) && (
+                      <>
                         <Button>
                           <div
                             className="modal-row"
                             onClick={() => {
-                              setSpouse(true);
-                              setModalCreate(true);
+                              setChangeItem(selectedItem);
+                              setModalChange(true);
                             }}
                           >
-                            Добавить супруга
+                            Изменить
                           </div>
                         </Button>
-                      )
-                    ) : (
-                      <></>
+                        {selectedItem.hasOwnProperty("parent") && (
+                          <Button>
+                            <div
+                              className="modal-row"
+                              onClick={() => {
+                                setModalCreate(true);
+                              }}
+                            >
+                              Добавить ребенка
+                            </div>
+                          </Button>
+                        )}
+                        {selectedItem.hasOwnProperty("spouses") ? (
+                          !selectedItem.spouses[0] && (
+                            <Button>
+                              <div
+                                className="modal-row"
+                                onClick={() => {
+                                  setSpouse(true);
+                                  setModalCreate(true);
+                                }}
+                              >
+                                Добавить супруга
+                              </div>
+                            </Button>
+                          )
+                        ) : (
+                          <></>
+                        )}
+                        {selectedItem.child != "0" ? (
+                          <Button>
+                            <div
+                              className="modal-row"
+                              onClick={() => {
+                                setModal(false);
+                                setModalDelete(true);
+                              }}
+                            >
+                              Удалить
+                            </div>
+                          </Button>
+                        ) : (
+                          <></>
+                        )}
+                      </>
                     )}
-                    {selectedItem.child!='0'?<Button>
-                      <div
-                        className="modal-row"
-                        onClick={() => {
-                          setModal(false);
-                          setModalDelete(true);
-                        }}
+                  </div>
+                </Container>
+              )}
+            </div>
+          </Modal>
+          <Modal active={modalChange} setActive={setModalChange}>
+            <div>
+              {selectedItem && (
+                <Container fluid>
+                  <Form
+                    noValidate
+                    validated={validated}
+                    onSubmit={handleSubmit}
+                    className="modal-inner modal-inner_form"
+                  >
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Фото</Form.Label>
+                      <UploadAvatar setFile={setFile}></UploadAvatar>
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Имя</Form.Label>
+                      <Form.Control
+                        placeholder="Имя"
+                        value={changeItem.name}
+                        onChange={(e) =>
+                          setChangeItem((prevState) => ({
+                            ...prevState,
+                            name: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Фамилия</Form.Label>
+                      <Form.Control
+                        placeholder="Фамилия"
+                        value={changeItem.surname}
+                        onChange={(e) =>
+                          setChangeItem((prevState) => ({
+                            ...prevState,
+                            surname: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Отчество</Form.Label>
+                      <Form.Control
+                        placeholder="Отчество"
+                        value={changeItem.patr}
+                        onChange={(e) =>
+                          setChangeItem((prevState) => ({
+                            ...prevState,
+                            patr: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Пол</Form.Label>
+                      <Form.Group
+                        className=" modal-row"
+                        controlId="formBasicEmail"
                       >
-                        Удалить
-                      </div>
-                    </Button>:<></>}
-                    
-                  </>
-                )}
-              </div>
-            </Container>
-          )}
-        </div>
-      </Modal>
-      <Modal active={modalChange} setActive={setModalChange}>
-        <div>
-          {selectedItem && (
-            <Container fluid>
-              <Form
-                noValidate
-                validated={validated}
-                onSubmit={handleSubmit}
-                className="modal-inner modal-inner_form"
-              >
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Фото</Form.Label>
-                  <UploadAvatar setFile={setFile}></UploadAvatar>
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Имя</Form.Label>
-                  <Form.Control
-                    placeholder="Имя"
-                    value={changeItem.name}
-                    onChange={(e) =>
-                      setChangeItem((prevState) => ({
-                        ...prevState,
-                        name: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Фамилия</Form.Label>
-                  <Form.Control
-                    placeholder="Фамилия"
-                    value={changeItem.surname}
-                    onChange={(e) =>
-                      setChangeItem((prevState) => ({
-                        ...prevState,
-                        surname: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Отчество</Form.Label>
-                  <Form.Control
-                    placeholder="Отчество"
-                    value={changeItem.patr}
-                    onChange={(e) =>
-                      setChangeItem((prevState) => ({
-                        ...prevState,
-                        patr: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Пол</Form.Label>
-                  <Form.Group className=" modal-row" controlId="formBasicEmail">
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="М"
-                      checked={changeItem.sex == "М"}
-                      name="inlineRadioOptions"
-                      value={"М"}
-                      id="inlineRadio1"
-                      onChange={(e) =>
-                        setChangeItem((prevState) => ({
-                          ...prevState,
-                          sex: e.target.value,
-                        }))
-                      }
-                    />
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="Ж"
-                      checked={changeItem.sex == "Ж"}
-                      value={"Ж"}
-                      name="inlineRadioOptions"
-                      id="inlineRadio2"
-                      onChange={(e) =>
-                        setChangeItem((prevState) => ({
-                          ...prevState,
-                          sex: e.target.value,
-                        }))
-                      }
-                    />
-                  </Form.Group>
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Дата рождения</Form.Label>
-                  <Form.Control
-                    type="date"
-                    placeholder="Дата рождения"
-                    value={changeItem.dateOfBirthday}
-                    onChange={(e) =>
-                      setChangeItem((prevState) => ({
-                        ...prevState,
-                        dateOfBirthday: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Дата смерти</Form.Label>
-                  <Form.Control
-                    type="date"
-                    placeholder="Дата смерти"
-                    value={changeItem.dateOfDeath}
-                    onChange={(e) =>
-                      setChangeItem((prevState) => ({
-                        ...prevState,
-                        dateOfDeath: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
+                        <Form.Check
+                          inline
+                          type="radio"
+                          label="М"
+                          checked={changeItem.sex == "М"}
+                          name="inlineRadioOptions"
+                          value={"М"}
+                          id="inlineRadio1"
+                          onChange={(e) =>
+                            setChangeItem((prevState) => ({
+                              ...prevState,
+                              sex: e.target.value,
+                            }))
+                          }
+                        />
+                        <Form.Check
+                          inline
+                          type="radio"
+                          label="Ж"
+                          checked={changeItem.sex == "Ж"}
+                          value={"Ж"}
+                          name="inlineRadioOptions"
+                          id="inlineRadio2"
+                          onChange={(e) =>
+                            setChangeItem((prevState) => ({
+                              ...prevState,
+                              sex: e.target.value,
+                            }))
+                          }
+                        />
+                      </Form.Group>
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Дата рождения</Form.Label>
+                      <Form.Control
+                        type="date"
+                        placeholder="Дата рождения"
+                        value={changeItem.dateOfBirthday}
+                        onChange={(e) =>
+                          setChangeItem((prevState) => ({
+                            ...prevState,
+                            dateOfBirthday: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Дата смерти</Form.Label>
+                      <Form.Control
+                        type="date"
+                        placeholder="Дата смерти"
+                        value={changeItem.dateOfDeath}
+                        onChange={(e) =>
+                          setChangeItem((prevState) => ({
+                            ...prevState,
+                            dateOfDeath: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
 
-                <Button
-                  type="submit"
-                  className="modal-row"
-                  onClick={changeDevice}
-                >
-                  Сохранить
-                </Button>
-              </Form>
-            </Container>
-          )}
-        </div>
-      </Modal>
+                    <Button
+                      type="submit"
+                      className="modal-row"
+                      onClick={changeDevice}
+                    >
+                      Сохранить
+                    </Button>
+                  </Form>
+                </Container>
+              )}
+            </div>
+          </Modal>
 
-      <Modal active={modalCreate} setActive={setModalCreate}>
-        <div>
-          {selectedItem && (
-            <Container fluid>
-              <Form
-                noValidate
-                validated={validated}
-                onSubmit={handleSubmit}
-                className="modal-inner modal-inner_form"
-              >
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Фото</Form.Label>
-                  <UploadAvatar setFile={setFile}></UploadAvatar>
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Имя</Form.Label>
-                  <Form.Control
-                    required
-                    placeholder="Имя"
-                    value={createItem.name}
-                    onChange={(e) =>
-                      setCreateItem((prevState) => ({
-                        ...prevState,
-                        name: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Фамилия</Form.Label>
-                  <Form.Control
-                    required
-                    placeholder="Фамилия"
-                    value={createItem.surname}
-                    onChange={(e) =>
-                      setCreateItem((prevState) => ({
-                        ...prevState,
-                        surname: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Отчество</Form.Label>
-                  <Form.Control
-                    placeholder="Отчество"
-                    value={createItem.patr}
-                    onChange={(e) =>
-                      setCreateItem((prevState) => ({
-                        ...prevState,
-                        patr: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Пол</Form.Label>
-                  <Form.Group className=" modal-row" controlId="formBasicEmail">
-                    <Form.Check
-                      required
-                      defaultChecked={true}
-                      inline
-                      type="radio"
-                      label="М"
-                      checked={createItem.sex == "М"}
-                      name="inlineRadioOptions"
-                      value={"М"}
-                      id="inlineRadio1"
-                      onChange={(e) =>
-                        setCreateItem((prevState) => ({
-                          ...prevState,
-                          sex: e.target.value,
-                        }))
-                      }
-                    />
-                    <Form.Check
-                      inline
-                      type="radio"
-                      label="Ж"
-                      checked={createItem.sex == "Ж"}
-                      value={"Ж"}
-                      name="inlineRadioOptions"
-                      id="inlineRadio2"
-                      onChange={(e) =>
-                        setCreateItem((prevState) => ({
-                          ...prevState,
-                          sex: e.target.value,
-                        }))
-                      }
-                    />
-                  </Form.Group>
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Дата рождения</Form.Label>
-                  <Form.Control
-                    required
-                    type="date"
-                    placeholder="Дата рождения"
-                    value={createItem.dateOfBirthday}
-                    onChange={(e) =>
-                      setCreateItem((prevState) => ({
-                        ...prevState,
-                        dateOfBirthday: e.target.value,
-                        parent: selectedItem.child,
-                        familyId: id,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Дата смерти</Form.Label>
-                  <Form.Control
-                    type="date"
-                    placeholder="Дата смерти"
-                    value={createItem.dateOfDeath}
-                    onChange={(e) =>
-                      setCreateItem((prevState) => ({
-                        ...prevState,
-                        dateOfDeath: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
+          <Modal active={modalCreate} setActive={setModalCreate}>
+            <div>
+              {selectedItem && (
+                <Container fluid>
+                  <Form
+                    noValidate
+                    validated={validated}
+                    onSubmit={handleSubmit}
+                    className="modal-inner modal-inner_form"
+                  >
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Фото</Form.Label>
+                      <UploadAvatar setFile={setFile}></UploadAvatar>
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Имя</Form.Label>
+                      <Form.Control
+                        required
+                        placeholder="Имя"
+                        value={createItem.name}
+                        onChange={(e) =>
+                          setCreateItem((prevState) => ({
+                            ...prevState,
+                            name: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Фамилия</Form.Label>
+                      <Form.Control
+                        required
+                        placeholder="Фамилия"
+                        value={createItem.surname}
+                        onChange={(e) =>
+                          setCreateItem((prevState) => ({
+                            ...prevState,
+                            surname: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Отчество</Form.Label>
+                      <Form.Control
+                        placeholder="Отчество"
+                        value={createItem.patr}
+                        onChange={(e) =>
+                          setCreateItem((prevState) => ({
+                            ...prevState,
+                            patr: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Пол</Form.Label>
+                      <Form.Group
+                        className=" modal-row"
+                        controlId="formBasicEmail"
+                      >
+                        <Form.Check
+                          required
+                          defaultChecked={true}
+                          inline
+                          type="radio"
+                          label="М"
+                          checked={createItem.sex == "М"}
+                          name="inlineRadioOptions"
+                          value={"М"}
+                          id="inlineRadio1"
+                          onChange={(e) =>
+                            setCreateItem((prevState) => ({
+                              ...prevState,
+                              sex: e.target.value,
+                            }))
+                          }
+                        />
+                        <Form.Check
+                          inline
+                          type="radio"
+                          label="Ж"
+                          checked={createItem.sex == "Ж"}
+                          value={"Ж"}
+                          name="inlineRadioOptions"
+                          id="inlineRadio2"
+                          onChange={(e) =>
+                            setCreateItem((prevState) => ({
+                              ...prevState,
+                              sex: e.target.value,
+                            }))
+                          }
+                        />
+                      </Form.Group>
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Дата рождения</Form.Label>
+                      <Form.Control
+                        required
+                        type="date"
+                        placeholder="Дата рождения"
+                        value={createItem.dateOfBirthday}
+                        onChange={(e) =>
+                          setCreateItem((prevState) => ({
+                            ...prevState,
+                            dateOfBirthday: e.target.value,
+                            parent: selectedItem.child,
+                            familyId: id,
+                          }))
+                        }
+                      />
+                    </Form.Group>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Label>Дата смерти</Form.Label>
+                      <Form.Control
+                        type="date"
+                        placeholder="Дата смерти"
+                        value={createItem.dateOfDeath}
+                        onChange={(e) =>
+                          setCreateItem((prevState) => ({
+                            ...prevState,
+                            dateOfDeath: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
 
-                <Button
-                  type="submit"
-                  className="modal-row"
-                  onClick={(e) => {
-                    console.log("selectedItem");
-                    console.log(selectedItem);
-                    if (spouse) {
-                      console.log(spouse);
-                      setForm({
-                        personId: selectedItem.id,
-                        name: createItem.name,
-                        surname: createItem.surname,
-                        patr: createItem.patr,
-                        sex: createItem.sex,
-                        dateOfBirthday: createItem.dateOfBirthday,
-                        personId: selectedItem.id,
-                        dateOfDeath: createItem.dateOfDeath,
-                        img: file,
-                      });
-                    } else {
-                      setForm({
-                        name: createItem.name,
-                        surname: createItem.surname,
-                        patr: createItem.patr,
-                        sex: createItem.sex,
-                        dateOfBirthday: createItem.dateOfBirthday,
-                        parent: createItem.parent,
-                        familyId: createItem.familyId,
-                        dateOfDeath: createItem.dateOfDeath,
-                        img: file,
-                      });
-                    }
-                  }}
-                >
-                  Создать
-                </Button>
-              </Form>
-            </Container>
-          )}
-        </div>
-      </Modal>
+                    <Button
+                      type="submit"
+                      className="modal-row"
+                      onClick={(e) => {
+                        console.log("selectedItem");
+                        console.log(selectedItem);
+                        if (spouse) {
+                          console.log(spouse);
+                          setForm({
+                            personId: selectedItem.id,
+                            name: createItem.name,
+                            surname: createItem.surname,
+                            patr: createItem.patr,
+                            sex: createItem.sex,
+                            dateOfBirthday: createItem.dateOfBirthday,
+                            personId: selectedItem.id,
+                            dateOfDeath: createItem.dateOfDeath,
+                            img: file,
+                          });
+                        } else {
+                          setForm({
+                            name: createItem.name,
+                            surname: createItem.surname,
+                            patr: createItem.patr,
+                            sex: createItem.sex,
+                            dateOfBirthday: createItem.dateOfBirthday,
+                            parent: createItem.parent,
+                            familyId: createItem.familyId,
+                            dateOfDeath: createItem.dateOfDeath,
+                            img: file,
+                          });
+                        }
+                      }}
+                    >
+                      Создать
+                    </Button>
+                  </Form>
+                </Container>
+              )}
+            </div>
+          </Modal>
 
-      <Container fluid="xxl">
-        <Row>{tree && <h1>Дерево:{tree.name}</h1>}</Row>
-        {/* {cImg && (
+          <Container fluid="xxl">
+            <Row>{tree && <h1>Дерево:{tree.name}</h1>}</Row>
+            {/* {cImg && (
           <>
             <AdvancedImage cldImg={cImg} />
           </>
         )} */}
-      </Container>
-      <div className="container-tree">
-        <Row className="my-cont d-flex flex-column m-3">
-          <div className="class_b-container">
-            <div id="container-drag" className="container-drag">
-              <TransformWrapper
-                minScale={0.3}
-                maxScale={1.5}
-                initialScale={1}
-                panning={{
-                  disabled: true,
-                }}
-              >
-                <TransformComponent></TransformComponent>
-              </TransformWrapper>
-            </div>
+          </Container>
+          <div className="container-tree">
+            <Row className="my-cont d-flex flex-column m-3">
+              <div className="class_b-container">
+                <div id="container-drag" className="container-drag">
+                  <TransformWrapper
+                    minScale={0.3}
+                    maxScale={1.5}
+                    initialScale={1}
+                    panning={{
+                      disabled: true,
+                    }}
+                  >
+                    <TransformComponent></TransformComponent>
+                  </TransformWrapper>
+                </div>
+              </div>
+            </Row>
           </div>
-        </Row>
-      </div>
-    </Container>
+        </Container>
+      ):<div style={{textAlign:"center"}} className="container modal-row">BLOCKED</div>}
+    </>
   );
 });
 

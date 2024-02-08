@@ -545,7 +545,13 @@ const Shop = observer(() => {
 
                 <Button
                   className="modal-row"
-                  onClick={() => history(DEVICE_ROUTE + "/" + selectedItem.id)}
+                  onClick={() =>
+                    history(DEVICE_ROUTE + "/" + selectedItem.id, {
+                      state: {
+                        BLOCKED: selectedItem.blocked,
+                      },
+                    })
+                  }
                 >
                   Перейти к дереву
                 </Button>
@@ -586,7 +592,6 @@ const Shop = observer(() => {
             )}
           </Row>
           <Row>
-            
             <div className="family-cards-inner">
               {items.map(
                 (i) =>
@@ -624,7 +629,6 @@ const Shop = observer(() => {
                   )
               )}
             </div>
-            
           </Row>
         </>
       ) : (

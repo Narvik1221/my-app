@@ -545,7 +545,13 @@ const Shop = observer(() => {
                 </Button>
                 <Button
                   className="modal-row"
-                  onClick={() => history(DEVICE_ROUTE + "/" + selectedItem.id)}
+                  onClick={() =>
+                    history(DEVICE_ROUTE + "/" + selectedItem.id, {
+                      state: {
+                        BLOCKED: selectedItem.blocked,
+                      },
+                    })
+                  }
                 >
                   Перейти к дереву
                 </Button>
