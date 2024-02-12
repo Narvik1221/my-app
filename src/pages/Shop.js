@@ -19,6 +19,8 @@ import {
   fetchOneFamily,
   putFamily,
   delFamily,
+  fetchFamiliesSearch,
+  fetchAllFamilies,
 } from "../http/deviceAPI";
 import Pages from "../components/Pages";
 import React, { useContext, useEffect, useState } from "react";
@@ -55,27 +57,51 @@ const Shop = observer(() => {
     setValidated(true);
   };
   useEffect(() => {
-    fetchFamilies().then((data) => {
-      console.log(data);
-      setItems(data);
-      let myUser = localStorage.getItem("userData");
-      console.log(myUser);
-      if (myUser) {
-        setUserData(JSON.parse(myUser));
+    if (user.searchValue) {
+      fetchFamiliesSearch(user.searchValue).then((data) => {
+        console.log(data);
+        setItems(data);
+        let myUser = localStorage.getItem("userData");
+        console.log(myUser);
+        if (myUser) {
+          setUserData(JSON.parse(myUser));
+        }
+      });
+    } else {
+      if (viewParam) {
+        fetchAllFamilies().then((data) => {
+          console.log(data);
+          setItems(data);
+          let myUser = localStorage.getItem("userData");
+          console.log(myUser);
+          if (myUser) {
+            setUserData(JSON.parse(myUser));
+          }
+        });
+      } else {
+        fetchFamilies().then((data) => {
+          console.log(data);
+          setItems(data);
+          let myUser = localStorage.getItem("userData");
+          console.log(myUser);
+          if (myUser) {
+            setUserData(JSON.parse(myUser));
+          }
+        });
       }
-    });
-  }, []);
+    }
+  }, [user.searchValue, viewParam]);
   useEffect(() => {
-    console.log(user);
-  }, []);
+    console.log(items);
+    console.log(items.length);
+  }, [items]);
+
   useEffect(() => {
+
     if (items) {
       getUser().then((data) => {
         setMyUsers(data);
       });
-
-      let myItems = document.querySelectorAll(".family-owner");
-      myItems.forEach((i) => {});
     }
   }, [items]);
 
@@ -369,7 +395,7 @@ const Shop = observer(() => {
           }
         </div>
       </Modal>
-      <Modal zIndex={"100"} active={modalChange} setActive={setModalChange}>
+      <Modal zIndex={"100000"} active={modalChange} setActive={setModalChange}>
         <div>
           {selectedItem && (
             <Container fluid>
@@ -398,7 +424,7 @@ const Shop = observer(() => {
                       defaultChecked={true}
                       inline
                       type="radio"
-                      label="Публичный"
+                      label="Публичное"
                       checked={changeItem.public_tree + "" == "true"}
                       name="inlineRadioOptions"
                       value={"true"}
@@ -415,7 +441,7 @@ const Shop = observer(() => {
                       defaultChecked={true}
                       inline
                       type="radio"
-                      label="Приватный"
+                      label="Приватное"
                       checked={changeItem.public_tree + "" == "false"}
                       name="inlineRadioOptions"
                       value={"false"}
@@ -488,7 +514,7 @@ const Shop = observer(() => {
         </div>
       </Modal>
 
-      <Modal zIndex={"100"} active={modalDelete} setActive={setModalDelete}>
+      <Modal zIndex={"100000"} active={modalDelete} setActive={setModalDelete}>
         <div>
           {selectedItem && (
             <Container fluid>
@@ -572,62 +598,62 @@ const Shop = observer(() => {
                 Мои деревья
               </Button>
             )}
+            {user.isAuth && (
+              <Button
+                variant="primary"
+                className="family-create-button modal-row"
+                onClick={() => history(USERS)}
+              >
+                Пользователи
+              </Button>
+            )}
             {user.role == "ADMIN" && (
-              <>
-                <Button
-                  variant="primary"
-                  className="family-create-button modal-row"
-                  onClick={() => history(USERS)}
-                >
-                  Пользователи
-                </Button>
-                <Button
-                  variant="primary"
-                  className="family-create-button modal-row"
-                  onClick={() => setViewParam(!viewParam)}
-                >
-                  {viewParam ? "Публичные деревья" : "Все деревья"}
-                </Button>
-              </>
+              <Button
+                variant="primary"
+                className="family-create-button modal-row"
+                onClick={() => setViewParam(!viewParam)}
+              >
+                {viewParam ? "Публичные деревья" : "Все деревья"}
+              </Button>
             )}
           </Row>
           <Row>
             <div className="family-cards-inner">
-              {items.map(
-                (i) =>
-                  ((i.public_tree && !i.blocked) || viewParam) && (
-                    <Card className="family-tree-card">
-                      <Card.Body className="card-body-tree">
-                        <Card.Title style={{ fontSize: "28px" }}>
-                          Дерево: {i.name}
-                        </Card.Title>
-                        <Card.Title style={{ fontSize: "18px" }}>
-                          Тип: {i.public_tree ? "публичное" : "приватное"}
-                        </Card.Title>
-                        <Card.Title style={{ fontSize: "18px" }}>
-                          Заблокированное: {i.blocked ? "да" : "нет"}
-                        </Card.Title>
-                        <Card.Title
-                          className="family-owner"
-                          id={i.userId}
-                          style={{ fontSize: "18px" }}
-                        >
-                          владелец: {}
-                        </Card.Title>
-                        <Button
-                          className="family-card-button"
-                          variant="primary"
-                          onClick={() => {
-                            setSelectedItem(i);
-                            setModal(true);
-                          }}
-                        >
-                          Открыть
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  )
-              )}
+              {items.length>0 && 
+                items.map((i) => (
+                  i.families.length>0 &&
+                    i.families.map((j) => (
+                      <Card className="family-tree-card">
+                        <Card.Body className="card-body-tree">
+                          <Card.Title style={{ fontSize: "28px" }}>
+                            Дерево: {j.name}
+                          </Card.Title>
+                          <Card.Title style={{ fontSize: "18px" }}>
+                            Тип: {j.public_tree ? "публичное" : "приватное"}
+                          </Card.Title>
+                          <Card.Title style={{ fontSize: "18px" }}>
+                            Заблокированное: {j.blocked ? "да" : "нет"}
+                          </Card.Title>
+                          <Card.Title
+                            className="family-owner"
+                            style={{ fontSize: "18px" }}
+                          >
+                            владелец: {i.name} {i.surname}
+                          </Card.Title>
+                          <Button
+                            className="family-card-button"
+                            variant="primary"
+                            onClick={() => {
+                              setSelectedItem(j);
+                              setModal(true);
+                            }}
+                          >
+                            Открыть
+                          </Button>
+                        </Card.Body>
+                      </Card>
+                    ))
+                    ))}
             </div>
           </Row>
         </>

@@ -11,15 +11,16 @@ import UploadAvatar from "../components/UploadAvatar";
 import Modal from "../Modal/Modal";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import { getUser} from "../http/userAPI";
-import { blockUser} from "../http/deviceAPI";
+import { getUser } from "../http/userAPI";
+import { blockUser } from "../http/deviceAPI";
 import Pages from "../components/Pages";
 import React, { useContext, useEffect, useState } from "react";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
 import { FAMILY } from "../utils/consts";
 import Loader from "../components/Loader/Loader";
-const Shop = () => {
+const Shop = observer(() => {
+  const { user } = useContext(Context);
   const [modalCreate, setModalCreate] = useState(false);
   const history = useNavigate();
   const [items, setItems] = useState(false);
@@ -32,20 +33,39 @@ const Shop = () => {
   const [modalDelete, setModalDelete] = useState(false);
   const [selectedItem, setSelectedItem] = useState(false);
   useEffect(() => {
+    console.log("user");
+    console.log(user);
     let myUser = localStorage.getItem("userData");
     setUserData(JSON.parse(myUser));
   }, []);
-
   useEffect(() => {
-    getUser().then((data) => {
-      setItems(data.data.user);
-      let myUser = localStorage.getItem("userData");
-      console.log(myUser);
-      if (myUser) {
-        setUserData(JSON.parse(myUser));
-      }
-    });
-  }, []);
+    console.log(user.searchValue);
+    if (user.searchValue) {
+      getUser(user.searchValue).then((data) => {
+        setItems(data.data.user);
+        let myUser = localStorage.getItem("userData");
+        console.log(myUser);
+        console.log("user");
+        console.log(user);
+        if (myUser) {
+          setUserData(JSON.parse(myUser));
+        }
+      });
+    } else {
+      console.log("default ");
+      getUser().then((data) => {
+        setItems(data.data.user);
+        let myUser = localStorage.getItem("userData");
+        console.log(myUser);
+        console.log("user");
+        console.log(user);
+        if (myUser) {
+          setUserData(JSON.parse(myUser));
+        }
+      });
+    }
+  }, [user.searchValue]);
+  useEffect(() => {}, []);
   const blockUserHandle = () => {
     try {
       console.log(selectedItem.id);
@@ -57,9 +77,9 @@ const Shop = () => {
       console.error(e);
     }
   };
-  return (
+  return user.isAuth == true ? (
     <Container fluid="xxl" className="mt-3">
-      <Modal zIndex={"100"} active={modalDelete} setActive={setModalDelete}>
+      <Modal zIndex={"100000"} active={modalDelete} setActive={setModalDelete}>
         <div>
           {selectedItem && (
             <Container fluid>
@@ -67,8 +87,11 @@ const Shop = () => {
                 <div className="modal-row">
                   <br></br>
                   <span>
-                    Вы действительно хотите {selectedItem.blocked?"разблокировать ":"заблокировать "}{selectedItem.name}{" "}
-                    {selectedItem.surname}?{" "}
+                    Вы действительно хотите{" "}
+                    {selectedItem.blocked
+                      ? "разблокировать "
+                      : "заблокировать "}
+                    {selectedItem.name} {selectedItem.surname}?{" "}
                   </span>
                   <br></br>
                 </div>
@@ -91,13 +114,15 @@ const Shop = () => {
                 <Form.Label className=" modal-row">
                   Пользователь: {selectedItem.name} {selectedItem.surname}
                 </Form.Label>
+                {user.role == "ADMIN" && (
+                  <Button
+                    className="modal-row"
+                    onClick={() => setModalDelete(true)}
+                  >
+                    Заблокировать
+                  </Button>
+                )}
 
-                <Button
-                  className="modal-row"
-                  onClick={() => setModalDelete(true)}
-                >
-                  Заблокировать
-                </Button>
                 <Button
                   className="modal-row"
                   onClick={() =>
@@ -140,7 +165,7 @@ const Shop = () => {
                     Email: {i.email}
                   </Card.Title>
                   <Card.Title style={{ fontSize: "18px" }}>
-                    Роль: {i.email}
+                    Роль: {i.role}
                   </Card.Title>
                   <Card.Title style={{ fontSize: "18px" }}>
                     Заблокирован: {i.blocked ? "Да" : "Нет"}
@@ -151,7 +176,7 @@ const Shop = () => {
                       variant="primary"
                       onClick={() => {
                         setSelectedItem(i);
-                        setModalDelete(true)
+                        setModalDelete(true);
                       }}
                     >
                       Разблокировать
@@ -177,7 +202,11 @@ const Shop = () => {
         )}
       </Row>
     </Container>
+  ) : (
+    <div style={{ textAlign: "center" }} className="container modal-row">
+      Доступ заблокирован
+    </div>
   );
-};
+});
 
 export default Shop;

@@ -5,10 +5,11 @@ import close from "../assets/close.svg";
 const Modal = ({ active, setActive, children, classes, zIndex }) => {
   return (
     <div
-      style={{ zIndex: zIndex }}
+    style={{ zIndex: zIndex }}
       className={active ? "modal active " : "modal"}
     >
       <div
+       style={{ zIndex: zIndex }}
         className={
           active
             ? classes
@@ -18,12 +19,14 @@ const Modal = ({ active, setActive, children, classes, zIndex }) => {
         }
         onClick={(e) => e.stopPropagation()}
       >
-        {children}
-        <img
-          onClick={() => setActive(false)}
-          src={close}
-          className="modal__close"
-        ></img>
+        <div  style={{ zIndex: zIndex }} className="modal__inner">
+          {children}
+          <img
+            onClick={() => setActive(false)}
+            src={close}
+            className="modal__close"
+          ></img>
+        </div>
       </div>
     </div>
   );

@@ -5,13 +5,9 @@ html,
 }
 
 rect {
-  cursor: pointer;
-  fill: white;
-  overflow: hidden;
-  stroke: silver;
+  height: 40px;
   width: 140px;
-  height: 186px;
-  stroke-width: 2;
+  fill: none;
 }
 /* .modal-inner{
   overflow: auto;
@@ -26,6 +22,36 @@ line {
 .button-panel{
   margin-left: 8px;
   gap: 20px;
+}
+.search-input{
+ width:100%;
+ min-width: 360px;
+}
+.search-option{
+  
+  cursor: pointer;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-left: 0px;
+  right: 78px;
+  position: absolute;
+  width: 17px;
+  box-shadow: none !important;
+}
+.search-select > *{
+  padding: 12px !important;
+
+}
+.search-select{
+  
+  cursor: pointer;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-left: 0px;
+  right: 78px;
+  position: absolute;
+  width: 17px;
+  box-shadow: none !important;
 }
 path {
   fill: none;
@@ -42,6 +68,14 @@ path {
   font-size: 24px;
   font-weight: 500;
   padding: 6px 0;
+}
+.nav-inner{
+  color: white;
+  gap: 20px;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  flex-wrap:wrap;
 }
 .blocked{
   opacity: 0.6;
@@ -91,6 +125,13 @@ path {
   width: 260px;
 }
 .tree-card {
+  cursor: pointer;
+  fill: white;
+  overflow: hidden;
+  stroke: silver;
+  width: 140px;
+  height: 186px;
+  stroke-width: 2;
 }
 .image-modal {
   margin: 0 auto;
@@ -134,7 +175,18 @@ text {
 
 }
 
-
+@media (max-width: 991px) {
+  .nav-inner {
+    gap: 12px !important;
+    padding: 20px 0;
+    align-items: end;
+  }
+}
+@media (max-width: 1110px) {
+  .search-input {
+    min-width: 260px
+  }
+}
 /* .change{
   display: none;
   opacity: 0 ;

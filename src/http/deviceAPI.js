@@ -11,7 +11,14 @@ export const fetchFamilies = async () => {
     const {data} = await $host.get('api/family/')
     return data
 }
-
+export const fetchAllFamilies = async () => {
+    const {data} = await $authHost.get('api/family/all')
+    return data
+}
+export const fetchFamiliesSearch = async (params) => {
+    const {data} = await $host.get('api/family/search/'+params)
+    return data
+}
 export const fetchOneTree = async (id) => {
     const {data} = await $host.get('api/family/' + id)
     return data
@@ -32,6 +39,14 @@ export const createPerson = async (person,) => {
     const {data} = await $authHost.post('api/family/person',person)
     return data
 }
+
+
+export const createParent = async (person,) => {
+    const {data} = await $authHost.post('api/family/parent',person)
+    return data
+}
+
+
 export const deleteSpouse = async (id,personId,familyId) => {
     const {data} = await $authHost.delete('api/family/spouse/' + id+"/"+personId+"/"+familyId)
     return data

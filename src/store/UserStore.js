@@ -12,9 +12,29 @@ export default class UserStore {
         this._cuserId = false
         this._cname = false
         this._csurname = false
+        this._data = {}
+        this._searchValue = false
+        this._searchTable = false
         makeAutoObservable(this)
     }
-
+    setSearchValue(v) {
+        this._searchValue = v
+    }
+    get searchValue() {
+        return this._searchValue
+    }
+    setSearchTable(v) {
+        this._searchTable = v
+    }
+    get data() {
+        return this._data
+    }
+    setData(v) {
+        this._data = v
+    }
+    get searchTable() {
+        return this._searchTable
+    }
     setIsAuth(bool) {
         this._isAuth = bool
     }

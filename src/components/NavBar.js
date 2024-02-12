@@ -13,6 +13,7 @@ import {
 import { Button } from "react-bootstrap";
 import { observer } from "mobx-react-lite";
 import basket from "../assets/basket.svg";
+import  Search  from "../components/Search";
 import Container from "react-bootstrap/Container";
 import { useNavigate } from "react-router-dom";
 const NavBar = observer(() => {
@@ -39,33 +40,33 @@ const NavBar = observer(() => {
     }
   }, []);
   return (
-    <Navbar bg="dark" variant="dark">
+    <Navbar  sticky="top"
+    collapseOnSelect
+    expand="lg"
+    bg="dark"
+    variant="dark">
       <Container
         fluid="xxl"
         style={{
-          flexWrap: "wrap",
+          justifyContent:"space-between"
         }}
       >
-        <NavLink
+           <NavLink
           style={{ color: "white", fontSize: "30px", padding: "0 8px" }}
           to={SHOP_ROUTE}
         >
-          FAMILY_TREE
+          FAMILY TREE
         </NavLink>
-        {user.isAuth ? (
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse  style={{ justifyContent: "right"}} id="responsive-navbar-nav">
+          {user.isAuth ? (
           <Nav
-            className="ml-auto"
-            style={{
-              color: "white",
-              gap: "12px",
-              display: "flex",
-              alignItems: "center",
-              paddingLeft: "8px",
-              flexWrap:"wrap"
-            }}
+            className="nav-inner"
+  
           >
+            <Search></Search>
             <div    style={{
-              gap: "12px",
+              gap: "10px",
               display: "flex",
               alignItems: "center",
             }}>
@@ -92,6 +93,17 @@ const NavBar = observer(() => {
             </Button>
           </Nav>
         )}
+          </Navbar.Collapse>
+
+
+
+
+     
+
+
+
+
+     
       </Container>
     </Navbar>
   );

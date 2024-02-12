@@ -59,6 +59,7 @@ const Shop = observer(() => {
     setValidated(true);
   };
   useEffect(() => {
+    console.log(user.isAuth);
     let myUser = localStorage.getItem("userData");
     setUserData(JSON.parse(myUser));
   }, []);
@@ -166,7 +167,7 @@ const Shop = observer(() => {
     }
   };
 
-  return (
+  return user.isAuth ? (
     <Container fluid="xxl" className="mt-3">
       <Modal active={modalCreate} setActive={setModalCreate}>
         <div className="modal-inner">
@@ -370,7 +371,7 @@ const Shop = observer(() => {
           }
         </div>
       </Modal>
-      <Modal zIndex={"100"} active={modalChange} setActive={setModalChange}>
+      <Modal zIndex={"10000"} active={modalChange} setActive={setModalChange}>
         <div>
           {selectedItem && (
             <Container fluid>
@@ -436,7 +437,7 @@ const Shop = observer(() => {
                     />
                   </Form.Group>
                 </Form.Group>
-                <Form.Group className=" modal-row" controlId="formBasicEmail">
+                {user.role=="ADMIN"&&  <Form.Group className=" modal-row" controlId="formBasicEmail">
                   <Form.Label>Блокировать дерево</Form.Label>
                   <Form.Group className=" modal-row" controlId="formBasicEmail">
                     <Form.Check
@@ -474,7 +475,8 @@ const Shop = observer(() => {
                       }
                     />
                   </Form.Group>
-                </Form.Group>
+                </Form.Group>}
+              
 
                 <Button
                   type="submit"
@@ -495,7 +497,7 @@ const Shop = observer(() => {
         </div>
       </Modal>
 
-      <Modal zIndex={"100"} active={modalDelete} setActive={setModalDelete}>
+      <Modal zIndex={"10000"} active={modalDelete} setActive={setModalDelete}>
         <div>
           {selectedItem && (
             <Container fluid>
@@ -617,6 +619,10 @@ const Shop = observer(() => {
         )}
       </Row>
     </Container>
+  ) : (
+    <div style={{ textAlign: "center" }} className="container modal-row">
+      Доступ заблокирован
+    </div>
   );
 });
 

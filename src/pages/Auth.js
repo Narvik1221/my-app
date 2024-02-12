@@ -44,6 +44,7 @@ const Auth = observer(() => {
       user.setUser(user);
       user.setRole(data.userData.role);
       user.setIsAuth(true);
+      user.setData(data.userData.id)
       user.setName(data.userData.name);
       user.setSurname(data.userData.surname);
       history(SHOP_ROUTE);

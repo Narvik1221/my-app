@@ -27,7 +27,11 @@ export const check = async () => {
   localStorage.setItem("token", data.token);
   return { token: jwtDecode(data.token), userData: data.user };
 };
-export const getUser = async () => {
+export const getUser = async (params) => {
+  if(params){
+    const { data } = await $host.get("api/user/"+params);
+    return { data};
+  }
   const { data } = await $host.get("api/user/");
   return { data};
 };
