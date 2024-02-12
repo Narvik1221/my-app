@@ -325,9 +325,12 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return (
-              "https://res.cloudinary.com/dlmr1ru52/image/upload/" + d.data.img
-            );
+            return d.data.img == "i.webp"
+              ? "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+                  d.data.img +
+                  ".webp"
+              : "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+                  d.data.img;
           })
           .classed("img-card", true)
       );
@@ -347,10 +350,12 @@ const TreePage = observer(() => {
             return d.y - 25;
           })
           .attr("xlink:href", function (d) {
-            return (
-              "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
-              d.data.spouses[0]?.img
-            );
+            return d.data.spouses[0]?.img == "i.webp"
+              ? "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+                  d.data.spouses[0]?.img +
+                  ".webp"
+              : "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+                  d.data.spouses[0]?.img;
           })
           .classed("img-card", true)
           .classed("hide", function (d) {
@@ -583,23 +588,18 @@ const TreePage = observer(() => {
       console.log(createItem);
 
       if (parent) {
-
         myFormData.append("parent", "");
         myFormData.append("current", +selectedItem.child - 1);
         myFormData.append("currentId", selectedItem.id);
-
       } else if (brother) {
         if (selectedItem.parent == "") {
           myFormData.append("parent", "");
           myFormData.append("current", +selectedItem.child - 1);
           myFormData.append("currentId", selectedItem.id);
-
         } else {
-
           myFormData.append("parent", selectedItem.parent);
         }
       } else {
-
         myFormData.append("parent", createItem.parent);
       }
 
