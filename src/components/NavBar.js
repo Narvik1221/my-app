@@ -48,7 +48,9 @@ const NavBar = observer(() => {
       <Container
         fluid="xxl"
         style={{
-          justifyContent:"space-between"
+          justifyContent:"space-between",
+          paddingTop:"6px",
+          paddingBottom:"6px",
         }}
       >
            <NavLink

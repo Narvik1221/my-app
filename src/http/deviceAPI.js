@@ -64,6 +64,10 @@ export const createFamily = async (person) => {
     const {data} = await $authHost.post('api/family/',person)
     return data
 }
+export const createFamilyGed = async (person) => {
+    const {data} = await $authHost.post('api/family/addFile',person)
+    return data
+}
 export const putFamily = async (id,person) => {
     const {data} = await $authHost.put('api/family/'+id,person)
     return data

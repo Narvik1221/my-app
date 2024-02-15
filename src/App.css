@@ -65,7 +65,7 @@ path {
   overflow: auto;
 }
 .modal-row {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 500;
   padding: 6px 0;
 }
@@ -122,7 +122,8 @@ path {
   min-width: 280px;
 }
 .family-create-button {
-  width: 260px;
+  max-width: 300px;
+    min-width: 260px
 }
 .tree-card {
   cursor: pointer;

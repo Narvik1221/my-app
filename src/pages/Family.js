@@ -16,6 +16,7 @@ import { getUser } from "../http/userAPI";
 import {
   fetchFamilies,
   createFamily,
+  createFamilyGed,
   fetchOneFamily,
   putFamily,
   delFamily,
@@ -36,18 +37,21 @@ const Shop = observer(() => {
   const [modal, setModal] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [modalCreate, setModalCreate] = useState(false);
+  const [modalCreateGed, setModalCreateGed] = useState(false);
   const history = useNavigate();
   const [items, setItems] = useState(false);
   const [changeItem, setChangeItem] = useState({});
   const [createItem, setCreateItem] = useState({});
+  const [createItemGed, setCreateItemGed] = useState({});
   const [validated, setValidated] = useState(false);
   const [file, setFile] = useState(null);
   const [userData, setUserData] = useState(undefined);
   const [myUsers, setMyUsers] = useState(null);
   const [modalChange, setModalChange] = useState(false);
   const [selectedItem, setSelectedItem] = useState(false);
-
+  const [gedFile, setGedFile] = useState("");
   const [form, setForm] = useState(false);
+  const [formGed, setFormGed] = useState(false);
   const [formChange, setFormChange] = useState(false);
   const handleSubmit = (event) => {
     const form = event.currentTarget;
@@ -110,6 +114,37 @@ const Shop = observer(() => {
       createTree();
     }
   }, [form]);
+
+  useEffect(() => {
+    if (formGed) {
+      createTreeGed();
+    }
+  }, [formGed]);
+  const createTreeGed = () => {
+    try {
+      if (
+        gedFile &&
+        createItemGed.name &&
+        createItemGed.userId &&
+        createItemGed.public_tree
+      ) {
+        let myFormData = new FormData();
+        myFormData.append("name", createItemGed.name);
+        myFormData.append("userId", createItemGed.userId);
+        myFormData.append("public_tree", createItemGed.public_tree);
+        myFormData.append("file", gedFile);
+        console.log(gedFile);
+        createFamilyGed(myFormData).then((data) => {
+          console.log(data);
+          console.log(myFormData);
+          window.location.reload();
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     if (formChange) {
       console.log(formChange);
@@ -169,6 +204,100 @@ const Shop = observer(() => {
 
   return user.isAuth ? (
     <Container fluid="xxl" className="mt-3">
+      <Modal active={modalCreateGed} setActive={setModalCreateGed}>
+        <div className="modal-inner">
+          {
+            <Container fluid>
+              <Form
+                noValidate
+                validated={validated}
+                onSubmit={handleSubmit}
+                className="modal-inner modal-inner_form"
+              >
+                <Form.Group className=" modal-row">
+                  <Form.Label>Название дерева</Form.Label>
+                  <Form.Control
+                    required
+                    placeholder="Название дерева"
+                    value={createItemGed.name}
+                    onChange={(e) =>
+                      setCreateItemGed((prevState) => ({
+                        ...prevState,
+                        name: e.target.value,
+                        userId: ID ? ID : userData.id,
+                      }))
+                    }
+                  />
+                </Form.Group>
+                <Form.Group className=" modal-row" controlId="formBasicEmail">
+                  <Form.Label>Тип доступа к дереву</Form.Label>
+                  <Form.Group className=" modal-row" controlId="formBasicEmail">
+                    <Form.Check
+                      required
+                      inline
+                      type="radio"
+                      label="Публичный"
+                      checked={createItemGed.public_tree == "true"}
+                      name="inlineRadioOptionsF"
+                      value={"true"}
+                      id="inlineRadioF1"
+                      onChange={(e) =>
+                        setCreateItemGed((prevState) => ({
+                          ...prevState,
+                          public_tree: e.target.value,
+                        }))
+                      }
+                    />
+                    <Form.Check
+                      inline
+                      type="radio"
+                      label="Приватный"
+                      checked={createItemGed.public_tree == "false"}
+                      value={"false"}
+                      name="inlineRadioOptionsF"
+                      id="inlineRadioF2"
+                      onChange={(e) =>
+                        setCreateItemGed((prevState) => ({
+                          ...prevState,
+                          public_tree: e.target.value,
+                        }))
+                      }
+                    />
+                  </Form.Group>
+                </Form.Group>
+
+                <Form.Group className=" modal-row">
+                  <Form.Label>Выберите GEDCOM файл </Form.Label>
+                  <Form.Control
+                    type="file"
+                    required
+                    accept=".ged,.gedcom"
+                    placeholder="Выбрать файл"
+                    onChange={(e) => {
+                      setGedFile(e.target.files[0]);
+                    }}
+                  />
+                </Form.Group>
+                <Button
+                  type="submit"
+                  className="modal-row"
+                  onClick={() => {
+                    setFormGed({
+                      name: createItemGed.name,
+                      userId: createItemGed.userId,
+                      public_tree: createItemGed.public_tree,
+                      file: gedFile,
+                    });
+                  }}
+                >
+                  Создать
+                </Button>
+              </Form>
+            </Container>
+          }
+        </div>
+      </Modal>
+
       <Modal active={modalCreate} setActive={setModalCreate}>
         <div className="modal-inner">
           {
@@ -437,46 +566,50 @@ const Shop = observer(() => {
                     />
                   </Form.Group>
                 </Form.Group>
-                {user.role=="ADMIN"&&  <Form.Group className=" modal-row" controlId="formBasicEmail">
-                  <Form.Label>Блокировать дерево</Form.Label>
+                {user.role == "ADMIN" && (
                   <Form.Group className=" modal-row" controlId="formBasicEmail">
-                    <Form.Check
-                      required
-                      defaultChecked={true}
-                      inline
-                      type="radio"
-                      label="Да"
-                      checked={changeItem.blocked + "" == "true"}
-                      name="inlineRadioOptions1"
-                      value={"true"}
-                      id="inlineRadio2"
-                      onChange={(e) =>
-                        setChangeItem((prevState) => ({
-                          ...prevState,
-                          blocked: e.target.value,
-                        }))
-                      }
-                    />
-                    <Form.Check
-                      required
-                      defaultChecked={true}
-                      inline
-                      type="radio"
-                      label="Нет"
-                      checked={changeItem.blocked + "" == "false"}
-                      name="inlineRadioOptions1"
-                      value={"false"}
-                      id="inlineRadio2"
-                      onChange={(e) =>
-                        setChangeItem((prevState) => ({
-                          ...prevState,
-                          blocked: e.target.value,
-                        }))
-                      }
-                    />
+                    <Form.Label>Блокировать дерево</Form.Label>
+                    <Form.Group
+                      className=" modal-row"
+                      controlId="formBasicEmail"
+                    >
+                      <Form.Check
+                        required
+                        defaultChecked={true}
+                        inline
+                        type="radio"
+                        label="Да"
+                        checked={changeItem.blocked + "" == "true"}
+                        name="inlineRadioOptions1"
+                        value={"true"}
+                        id="inlineRadio2"
+                        onChange={(e) =>
+                          setChangeItem((prevState) => ({
+                            ...prevState,
+                            blocked: e.target.value,
+                          }))
+                        }
+                      />
+                      <Form.Check
+                        required
+                        defaultChecked={true}
+                        inline
+                        type="radio"
+                        label="Нет"
+                        checked={changeItem.blocked + "" == "false"}
+                        name="inlineRadioOptions1"
+                        value={"false"}
+                        id="inlineRadio2"
+                        onChange={(e) =>
+                          setChangeItem((prevState) => ({
+                            ...prevState,
+                            blocked: e.target.value,
+                          }))
+                        }
+                      />
+                    </Form.Group>
                   </Form.Group>
-                </Form.Group>}
-              
+                )}
 
                 <Button
                   type="submit"
@@ -576,6 +709,14 @@ const Shop = observer(() => {
           onClick={() => setModalCreate(true)}
         >
           Добавить дерево
+        </Button>
+
+        <Button
+          variant="primary"
+          className="family-create-button modal-row"
+          onClick={() => setModalCreateGed(true)}
+        >
+          Загрузить GEDCOM файл
         </Button>
       </Row>
       <Row>

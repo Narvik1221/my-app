@@ -706,8 +706,12 @@ const TreePage = observer(() => {
                         width={300}
                         height={300}
                         src={
-                          "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
-                          selectedItem.img
+                          selectedItem.img == "i.webp"
+                            ? "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+                              selectedItem.img +
+                              ".webp"
+                            : "https://res.cloudinary.com/dlmr1ru52/image/upload/" +
+                              selectedItem.img
                         }
                       />
                       <div className="modal-row">
