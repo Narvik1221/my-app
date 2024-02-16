@@ -129,15 +129,20 @@ const TreePage = observer(() => {
   }, [scrollCoords]); //стартовая позиция окна
 
   useEffect(() => {
-    fetchOneTree(id).then((data) => setTree(data));
-  }, []);
+    console.log(user.currentTree);
+    fetchOneTree(id, user.currentTree).then((data) => {
+      setTree(data);
+
+    });
+  }, [user.currentTree]);
 
   useEffect(() => {
-    if (
-      !tree.blocked &&
-      (tree.public_tree || tree.userId == user.data || user.role == "ADMIN")
-    ) {
-      if (tree) {
+    if (tree !== null && tree) {
+      console.log(tree);
+      if (
+        !tree.blocked &&
+        (tree.public_tree || tree.userId == user.data || user.role == "ADMIN")
+      ) {
         console.log(tree);
         // tree.people[0].parent = "-1";
 
@@ -201,12 +206,14 @@ const TreePage = observer(() => {
     }
   }, [w]);
   useEffect(() => {
-    if (
-      !tree.blocked &&
-      (tree.public_tree || tree.userId == user.data || user.role == "ADMIN")
-    ) {
-      if (tree) {
-        setData(tree.people);
+    if (tree !== null && tree) {
+      if (
+        !tree.blocked &&
+        (tree.public_tree || tree.userId == user.data || user.role == "ADMIN")
+      ) {
+        if (tree) {
+          setData(tree.people);
+        }
       }
     }
   }, [tree]);
@@ -568,11 +575,16 @@ const TreePage = observer(() => {
       createDevice();
     }
   }, [form]);
+
+  const uid = function () {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }; //уникальный id для создаваемого родителя
+
   const createDevice = () => {
     try {
       let myFormData = new FormData();
       myFormData.append("familyId", createItem.familyId);
-
+      myFormData.append("spouse", selectedItem.spouse);
       myFormData.append("name", createItem.name);
       myFormData.append("surname", createItem.surname);
 
@@ -589,12 +601,13 @@ const TreePage = observer(() => {
 
       if (parent) {
         myFormData.append("parent", "");
-        myFormData.append("current", +selectedItem.child - 1);
+        myFormData.append("current", uid());
         myFormData.append("currentId", selectedItem.id);
       } else if (brother) {
+        console.log(selectedItem.spouse)
         if (selectedItem.parent == "") {
           myFormData.append("parent", "");
-          myFormData.append("current", +selectedItem.child - 1);
+          myFormData.append("current", uid());
           myFormData.append("currentId", selectedItem.id);
         } else {
           myFormData.append("parent", selectedItem.parent);
@@ -774,6 +787,30 @@ const TreePage = observer(() => {
                                 }}
                               >
                                 Добавить брата/сестру
+                              </div>
+                            </Button>
+                          )}
+                          {selectedItem.hasOwnProperty("personId") && (
+                            <Button>
+                              <div
+                                className="modal-row"
+                                onClick={() => {
+                                  if (user.currentTree != -1) {
+                                    localStorage.setItem(
+                                      "currentTree",
+                                      JSON.stringify(-1)
+                                    );
+                                  } else {
+                                    localStorage.setItem(
+                                      "currentTree",
+                                      JSON.stringify(selectedItem.id)
+                                    );
+                                  }
+
+                                  window.location.reload();
+                                }}
+                              >
+                                Открыть дерево супруга
                               </div>
                             </Button>
                           )}

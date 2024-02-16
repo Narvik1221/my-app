@@ -5,7 +5,7 @@ import NavBar from "./components/NavBar";
 import { observer } from "mobx-react-lite";
 import { Context } from "./index";
 import { check } from "./http/userAPI";
-import Loader from "./components/Loader/Loader"
+import Loader from "./components/Loader/Loader";
 import "./App.css";
 import "./reset.css";
 const App = observer(() => {
@@ -16,8 +16,14 @@ const App = observer(() => {
     check()
       .then((data) => {
         let isAuth = localStorage.getItem("userData");
+        const currentTree = localStorage.getItem("currentTree");
+        if (currentTree && currentTree !== undefined && currentTree !== null) {
+          console.log(currentTree);
+          user.setCurrentTree(currentTree);
+        }
+
         if (isAuth) {
-          console.log(JSON.parse(isAuth).role)
+          console.log(JSON.parse(isAuth).role);
           user.setRole(JSON.parse(isAuth).role);
           user.setUser(true);
           user.setIsAuth(true);
