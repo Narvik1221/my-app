@@ -17,9 +17,11 @@ const App = observer(() => {
       .then((data) => {
         let isAuth = localStorage.getItem("userData");
         const currentTree = localStorage.getItem("currentTree");
+        const spouseId = localStorage.getItem("spouseId");
         if (currentTree && currentTree !== undefined && currentTree !== null) {
           console.log(currentTree);
           user.setCurrentTree(currentTree);
+          user.setSpouseId(spouseId);
         }
 
         if (isAuth) {

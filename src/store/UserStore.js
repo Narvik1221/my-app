@@ -16,6 +16,7 @@ export default class UserStore {
         this._searchValue = false
         this._searchTable = false
         this._currentTree = -1
+        this._spouseId = false
         makeAutoObservable(this)
     }
     setSearchValue(v) {
@@ -66,6 +67,9 @@ export default class UserStore {
     setCurrentTree(v) {
         this._currentTree = v
     }
+    setSpouseId(v) {
+        this._spouseId = v
+    }
     get isAuth() {
         return this._isAuth
     }
@@ -96,5 +100,8 @@ export default class UserStore {
 
     get currentTree() {
         return this._currentTree
+    }
+    get spouseId() {
+        return this._spouseId
     }
 }

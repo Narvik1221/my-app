@@ -130,9 +130,10 @@ const TreePage = observer(() => {
 
   useEffect(() => {
     console.log(user.currentTree);
-    fetchOneTree(id, user.currentTree).then((data) => {
+    console.log(user.spouseId);
+    fetchOneTree(id, user.currentTree,user.spouseId).then((data) => {
       setTree(data);
-
+      localStorage.removeItem('currentTree')
     });
   }, [user.currentTree]);
 
@@ -800,9 +801,16 @@ const TreePage = observer(() => {
                                       "currentTree",
                                       JSON.stringify(-1)
                                     );
+
                                   } else {
+                                    let cur=data.filter(i=>i.id==selectedItem.personId)
+                                    console.log(JSON.stringify(cur[0].child))
                                     localStorage.setItem(
                                       "currentTree",
+                                      cur[0].child
+                                    );
+                                    localStorage.setItem(
+                                      "spouseId",
                                       JSON.stringify(selectedItem.id)
                                     );
                                   }
