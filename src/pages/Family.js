@@ -20,17 +20,17 @@ import {
   fetchOneFamily,
   putFamily,
   delFamily,
+  fetchFamiliesAutoSearch,
 } from "../http/deviceAPI";
 import Pages from "../components/Pages";
 import React, { useContext, useEffect, useState } from "react";
 import Loader from "../components/Loader/Loader";
 import "../App.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { DEVICE_ROUTE } from "../utils/consts";
 const Shop = observer(() => {
+  let { id } = useParams();
   const { user } = useContext(Context);
-  const SURNAME = useLocation().state?.SURNAME;
-  const NAME = useLocation().state?.NAME;
   const ID = useLocation().state?.ID;
   const { state } = useLocation();
   const { navigateId } = state != null ? state : "";
@@ -53,6 +53,9 @@ const Shop = observer(() => {
   const [form, setForm] = useState(false);
   const [formGed, setFormGed] = useState(false);
   const [formChange, setFormChange] = useState(false);
+  const [myName, setMyName] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
+  const [mySurname, setMySurname] = useState(false);
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -63,6 +66,16 @@ const Shop = observer(() => {
     setValidated(true);
   };
   useEffect(() => {
+    console.log("userId");
+    console.log(id);
+    if (id) {
+      getUser().then((data) => {
+        let d = data.data.user.filter((d) => d.id == id);
+        console.log(d);
+        setMyName(d[0].name);
+        setMySurname(d[0].surname);
+      });
+    }
     console.log(user.isAuth);
     let myUser = localStorage.getItem("userData");
     setUserData(JSON.parse(myUser));
@@ -200,6 +213,16 @@ const Shop = observer(() => {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const searchAuto = () => {
+    setModal(false)
+    fetchFamiliesAutoSearch(selectedItem.id,selectedItem.userId).then((data) => {
+      setIsSearch(true);
+      console.log(data);
+      setItems(data);
+
+    });
   };
 
   return user.isAuth ? (
@@ -690,16 +713,27 @@ const Shop = observer(() => {
                 >
                   Перейти к дереву
                 </Button>
+                <Button className="modal-row" onClick={() => searchAuto()}>
+                  Возможные родственники
+                </Button>
               </Form>
             </Container>
           )}
         </div>
       </Modal>
-      {NAME && (
+      {myName && (
         <Row>
-          <h1 className="title-text inside-title">
-            Пользователь: {NAME} {SURNAME}
-          </h1>
+          <h3 className="title-text inside-title  ">
+            <a
+              className="pointer-link "
+              onClick={() => {
+                window.location.reload();
+              }}
+            >
+              Пользователь: {myName} {mySurname}
+            </a>{" "}
+            {isSearch && "-> Деревья возможных родственников"}
+          </h3>
         </Row>
       )}
       <Row className="button-panel">

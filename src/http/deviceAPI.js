@@ -19,6 +19,10 @@ export const fetchFamiliesSearch = async (params) => {
     const {data} = await $host.get('api/family/search/'+params)
     return data
 }
+export const fetchFamiliesAutoSearch = async (id,userId) => {
+    const {data} = await $host.get('api/family/searchAuto/'+id+'/'+userId)
+    return data
+}
 export const fetchOneTree = async (id,currentTree,spouseId) => {
     const {data} = await $host.get('api/family/' + id,{
         params: {

@@ -69,6 +69,16 @@ path {
   font-weight: 500;
   padding: 6px 0;
 }
+.pointer-link{
+  text-decoration: none;
+  border-bottom: 4px solid black;
+  color: black;
+  cursor: pointer;
+}
+.pointer-link:hover{
+  border-bottom: none;
+
+}
 .nav-inner{
   color: white;
   gap: 20px;

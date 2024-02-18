@@ -131,9 +131,12 @@ const TreePage = observer(() => {
   useEffect(() => {
     console.log(user.currentTree);
     console.log(user.spouseId);
-    fetchOneTree(id, user.currentTree,user.spouseId).then((data) => {
+    console.log(user.spouse);
+    fetchOneTree(id, user.currentTree, user.spouseId).then((data) => {
       setTree(data);
-      localStorage.removeItem('currentTree')
+      localStorage.removeItem("currentTree");
+      localStorage.removeItem("spouse");
+      localStorage.removeItem("spouseId");
     });
   }, [user.currentTree]);
 
@@ -605,7 +608,7 @@ const TreePage = observer(() => {
         myFormData.append("current", uid());
         myFormData.append("currentId", selectedItem.id);
       } else if (brother) {
-        console.log(selectedItem.spouse)
+        console.log(selectedItem.spouse);
         if (selectedItem.parent == "") {
           myFormData.append("parent", "");
           myFormData.append("current", uid());
@@ -801,10 +804,11 @@ const TreePage = observer(() => {
                                       "currentTree",
                                       JSON.stringify(-1)
                                     );
-
                                   } else {
-                                    let cur=data.filter(i=>i.id==selectedItem.personId)
-                                    console.log(JSON.stringify(cur[0].child))
+                                    let cur = data.filter(
+                                      (i) => i.id == selectedItem.personId
+                                    );
+                                    console.log(JSON.stringify(cur[0].child));
                                     localStorage.setItem(
                                       "currentTree",
                                       cur[0].child
@@ -812,6 +816,13 @@ const TreePage = observer(() => {
                                     localStorage.setItem(
                                       "spouseId",
                                       JSON.stringify(selectedItem.id)
+                                    );
+                                    localStorage.setItem(
+                                      "spouse",
+                                      JSON.stringify({
+                                        name: selectedItem.name,
+                                        surname: selectedItem.surname,
+                                      })
                                     );
                                   }
 
@@ -1220,7 +1231,29 @@ const TreePage = observer(() => {
             </Modal>
 
             <Container fluid="xxl">
-              <Row>{tree && <h1>Дерево:{tree.name}</h1>}</Row>
+              <Container fluid="xxl" >
+                {tree && (
+                  <h3 className="title-text">
+                    {" "}
+                    <a
+                      onClick={() => {
+                        localStorage.removeItem("currentTree");
+                        localStorage.removeItem("spouse");
+                        localStorage.removeItem("spouseId");
+                        window.location.reload()
+                      }}
+                      className="pointer-link"
+                    >
+                      Дерево:{tree.name}{" "}
+                    </a>{" "}
+                    {user.spouse &&
+                      "->Супруг: " +
+                        user.spouse.name +
+                        " " +
+                        user.spouse.surname}{" "}
+                  </h3>
+                )}
+              </Container>
               {/* {cImg && (
           <>
             <AdvancedImage cldImg={cImg} />
