@@ -491,7 +491,9 @@ const TreePage = observer(() => {
         .enter()
         .append("text")
         .text(function (d) {
-          return d.data.surname;
+          return d.data.surname.length > 10
+            ? d.data.surname.slice(0, 10) + "..."
+            : d.data.surname.slice(0, 10);
         })
         .attr("x", function (d) {
           return d.x;
@@ -505,7 +507,9 @@ const TreePage = observer(() => {
         .enter()
         .append("text")
         .text(function (d) {
-          return d.data.spouses[0]?.surname;
+          return d.data.spouses[0]?.surname.length > 10
+            ? d.data.spouses[0]?.surname.slice(0, 10) + "..."
+            : d.data.spouses[0]?.surname.slice(0, 10);
         })
         .attr("x", function (d) {
           return d.x + 170;
@@ -1231,7 +1235,7 @@ const TreePage = observer(() => {
             </Modal>
 
             <Container fluid="xxl">
-              <Container fluid="xxl" >
+              <Container fluid="xxl">
                 {tree && (
                   <h3 className="title-text">
                     {" "}
@@ -1240,7 +1244,7 @@ const TreePage = observer(() => {
                         localStorage.removeItem("currentTree");
                         localStorage.removeItem("spouse");
                         localStorage.removeItem("spouseId");
-                        window.location.reload()
+                        window.location.reload();
                       }}
                       className="pointer-link"
                     >
