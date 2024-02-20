@@ -70,6 +70,9 @@ path {
   padding: 6px 0;
 }
 .pointer-link{
+  display: flex;
+  max-width: fit-content;
+  flex-wrap: wrap;
   text-decoration: none;
   border-bottom: 4px solid black;
   color: black;
@@ -91,6 +94,7 @@ path {
   opacity: 0.6;
 }
 .title-text {
+  max-width: 90vw;
   font-size: 30px;
   font-weight: 600;
   padding: 6px 0;

@@ -33,8 +33,8 @@ export default function UploadAvatar({ setFile }) {
   return (
     <div>
       <Avatar
-        width={400}
-        height={400}
+        width={350}
+        height={350}
         onCrop={onCrop}
         onClose={onClose}
         src={src}

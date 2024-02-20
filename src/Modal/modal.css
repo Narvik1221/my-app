@@ -22,12 +22,14 @@
 .modal__content {
     position: relative;
     max-height: 100vh;
+    max-width: 460px;
     overflow: hidden;
     border-radius: 12px;
     background-color: white;
-    min-width: 500px;
+    min-width: 340px;
     transform: scale(0.5);
     transition: 0.4s all;
+    width: 100%;
 }
 .modal__inner{
     padding: 20px;

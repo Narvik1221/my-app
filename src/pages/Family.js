@@ -723,14 +723,14 @@ const Family = observer(() => {
       {myName && (
         <Row>
           <h3 className="title-text inside-title  ">
-            <a
+            <div
               className="pointer-link "
               onClick={() => {
                 window.location.reload();
               }}
             >
               Пользователь: {myName} {mySurname}
-            </a>{" "}
+            </div>{" "}
             {isSearch && "-> Деревья возможных родственников"}
           </h3>
         </Row>
