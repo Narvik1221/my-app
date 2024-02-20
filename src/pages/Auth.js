@@ -4,7 +4,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from "../utils/consts";
+import { LOGIN_ROUTE, REGISTRATION_ROUTE, FAMILIES_ROUTE } from "../utils/consts";
 import { login, registration } from "../http/userAPI";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
@@ -47,7 +47,7 @@ const Auth = observer(() => {
       user.setData(data.userData.id)
       user.setName(data.userData.name);
       user.setSurname(data.userData.surname);
-      history(SHOP_ROUTE);
+      history(FAMILIES_ROUTE);
      //window.location.reload();
     } catch (e) {
       alert(e.response);

@@ -1,9 +1,5 @@
 import { Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import TypeBar from "../components/TypeBar";
-import BrandBar from "../components/BrandBar";
-import DeviceList from "../components/DeviceList";
 import { observer } from "mobx-react-lite";
 import Form from "react-bootstrap/Form";
 import { Context } from "../index";
@@ -28,7 +24,7 @@ import Loader from "../components/Loader/Loader";
 import "../App.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { DEVICE_ROUTE } from "../utils/consts";
-const Shop = observer(() => {
+const Family = observer(() => {
   let { id } = useParams();
   const { user } = useContext(Context);
   const ID = useLocation().state?.ID;
@@ -56,6 +52,7 @@ const Shop = observer(() => {
   const [myName, setMyName] = useState(false);
   const [isSearch, setIsSearch] = useState(false);
   const [mySurname, setMySurname] = useState(false);
+  const [gedButtonText, setGedButtonText] = useState("Создать");
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -141,6 +138,7 @@ const Shop = observer(() => {
         createItemGed.userId &&
         createItemGed.public_tree
       ) {
+        setGedButtonText("Идет загрузка...");
         let myFormData = new FormData();
         myFormData.append("name", createItemGed.name);
         myFormData.append("userId", createItemGed.userId);
@@ -216,13 +214,14 @@ const Shop = observer(() => {
   };
 
   const searchAuto = () => {
-    setModal(false)
-    fetchFamiliesAutoSearch(selectedItem.id,selectedItem.userId).then((data) => {
-      setIsSearch(true);
-      console.log(data);
-      setItems(data);
-
-    });
+    setModal(false);
+    fetchFamiliesAutoSearch(selectedItem.id, selectedItem.userId).then(
+      (data) => {
+        setIsSearch(true);
+        console.log(data);
+        setItems(data);
+      }
+    );
   };
 
   return user.isAuth ? (
@@ -313,7 +312,7 @@ const Shop = observer(() => {
                     });
                   }}
                 >
-                  Создать
+                  {gedButtonText}
                 </Button>
               </Form>
             </Container>
@@ -801,4 +800,4 @@ const Shop = observer(() => {
   );
 });
 
-export default Shop;
+export default Family;

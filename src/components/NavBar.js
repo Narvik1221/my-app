@@ -7,7 +7,7 @@ import { NavLink } from "react-router-dom";
 import {
   ADMIN_ROUTE,
   LOGIN_ROUTE,
-  SHOP_ROUTE,
+  FAMILIES_ROUTE,
   BASKET_ROUTE,
 } from "../utils/consts";
 import { Button } from "react-bootstrap";
@@ -26,7 +26,7 @@ const NavBar = observer(() => {
     user.setRole(false);
     localStorage.removeItem("userData");
     setUserData(undefined);
-    history(SHOP_ROUTE);
+    history(FAMILIES_ROUTE);
   };
   useEffect(() => {
     try {
@@ -55,7 +55,7 @@ const NavBar = observer(() => {
       >
            <NavLink
           style={{ color: "white", fontSize: "30px", padding: "0 8px" }}
-          to={SHOP_ROUTE}
+          to={FAMILIES_ROUTE}
         >
           FAMILY TREE
         </NavLink>

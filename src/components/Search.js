@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { Context } from "../index";
 import { useNavigate } from "react-router-dom";
 import {
-  SHOP_ROUTE,FAMILY,USERS
+  FAMILIES_ROUTE,FAMILY,USERS
 } from "../utils/consts";
 const Search =observer( () => {
     const [searchType,setSearchtype]=useState("Поиск по пользователям")
@@ -19,7 +19,7 @@ const Search =observer( () => {
           if(searchTable=="User")
           history(USERS)
         else{
-          history(SHOP_ROUTE)
+          history(FAMILIES_ROUTE)
         }
           } catch (e) {
             console.error(e);

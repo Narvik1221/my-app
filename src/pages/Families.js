@@ -1,10 +1,7 @@
 import { Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import TypeBar from "../components/TypeBar";
-import BrandBar from "../components/BrandBar";
-import DeviceList from "../components/DeviceList";
-import Family from "../pages/Family";
+
+import Family from "./Family";
 import { observer } from "mobx-react-lite";
 import Form from "react-bootstrap/Form";
 import { Context } from "../index";
@@ -29,7 +26,7 @@ import "../App.css";
 import { useNavigate } from "react-router-dom";
 import { DEVICE_ROUTE, FAMILY, USERS } from "../utils/consts";
 import Loader from "../components/Loader/Loader";
-const Shop = observer(() => {
+const Families = observer(() => {
   const { user } = useContext(Context);
   const [modalCreate, setModalCreate] = useState(false);
   const [viewParam, setViewParam] = useState(false);
@@ -664,4 +661,4 @@ const Shop = observer(() => {
   );
 });
 
-export default Shop;
+export default Families;
