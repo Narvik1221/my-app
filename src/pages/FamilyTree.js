@@ -199,7 +199,7 @@ const TreePage = observer(() => {
             .attr(
               "width",
               w * 300 < window.screen.width
-                ? window.screen.width
+                ? window.screen.width+200
                 : w * 300 + 400 // tree.people.length * 300 < 1500 ? 1500 : tree.people.length * 400
             )
             .attr(
