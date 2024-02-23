@@ -259,6 +259,7 @@ const TreePage = observer(() => {
         );
       } catch (e) {
         console.error(e);
+        alert("Возникла ошибка при обработке файла")
       }
     }
   }, [data]);
