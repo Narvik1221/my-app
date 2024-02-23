@@ -5,6 +5,7 @@ import Modal from "../Modal/Modal";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
 import { useParams } from "react-router-dom";
+import uuid from 'react-uuid';
 import * as d3 from "d3";
 import {
   fetchOneTree,
@@ -23,8 +24,8 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import Loader from "../components/Loader/Loader";
+import ImageUpload from "../components/ImageUpload";
 const TreePage = observer(() => {
-  const BLOCKED = useLocation().state?.BLOCKED;
   const { user } = useContext(Context);
   const [tree, setTree] = useState(false);
   const { id } = useParams();
@@ -60,8 +61,10 @@ const TreePage = observer(() => {
   const [userData, setUserData] = useState(false);
   const [form, setForm] = useState(false);
   const [file, setFile] = useState(null);
+  const [cloudUrl,setCloudUrl]= useState(false);
   const [scrollCoords, setScrollCoords] = useState(null);
   const [validated, setValidated] = useState(false);
+  const [uuid,setUuid]= useState(false);
   const [cImg, setCimg] = useState(false);
   const handleSubmit = (event) => {
     const form = event.currentTarget;
@@ -127,7 +130,9 @@ const TreePage = observer(() => {
       });
     }
   }, [scrollCoords]); //стартовая позиция окна
-
+  useEffect(() => {
+    console.log(uuid)
+  }, [uuid]);
   useEffect(() => {
     console.log(user.currentTree);
     console.log(user.spouseId);
@@ -552,11 +557,10 @@ const TreePage = observer(() => {
       if (changeItem.dateOfDeath)
         formData.append("dateOfDeath", changeItem.dateOfDeath);
       console.log(file);
-      if (file) {
-        console.log(file);
-        formData.append("img", file);
+      if(file && uuid){
+        uploadImage()
+        formData.append("img", uuid);
       }
-
       if (changeItem.hasOwnProperty("personId")) {
         console.log(selectedItem.id);
 
@@ -588,6 +592,39 @@ const TreePage = observer(() => {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }; //уникальный id для создаваемого родителя
 
+
+  const uploadImage = async () => {
+    const data = new FormData();
+    data.append("file",file );
+    data.append(
+      "upload_preset",
+      process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
+    );
+    data.append("cloud_name", process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
+    data.append("public_id",uuid)
+    console.log(file);
+    console.log(uuid);
+    if(file && uuid){
+      try {
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          {
+            method: "POST",
+            body: data,
+         
+          }
+        );
+        const res = await response.json();
+        console.log(res);
+        console.log(res.public_id)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+   
+  };
+
+
   const createDevice = () => {
     try {
       let myFormData = new FormData();
@@ -602,8 +639,11 @@ const TreePage = observer(() => {
       myFormData.append("dateOfBirthday", createItem.dateOfBirthday);
       if (createItem.dateOfDeath)
         myFormData.append("dateOfDeath", createItem.dateOfDeath);
-
-      myFormData.append("img", file);
+      if(file && uuid){
+        uploadImage()
+        myFormData.append("img", uuid);
+      }
+   
       console.log(form);
       console.log(createItem);
 
@@ -629,7 +669,7 @@ const TreePage = observer(() => {
           createItem.dateOfBirthday &&
           createItem.sex &&
           createItem.surname &&
-          createItem.name
+          createItem.name 
         ) {
           if (spouse) {
             myFormData.append("personId", selectedItem.id);
@@ -759,6 +799,7 @@ const TreePage = observer(() => {
                         <span>Дата смерти: </span>
                         {selectedItem.dateOfDeath}
                       </div>
+                    
                       {(userData.role == "ADMIN" ||
                         (user.isAuth && tree.userId == userData.id)) && (
                         <>
@@ -906,7 +947,7 @@ const TreePage = observer(() => {
                         controlId="formBasicEmail"
                       >
                         <Form.Label>Фото</Form.Label>
-                        <UploadAvatar setFile={setFile}></UploadAvatar>
+                        <UploadAvatar setUuid={setUuid} setFile={setFile}></UploadAvatar>
                       </Form.Group>
                       <Form.Group
                         className=" modal-row"
@@ -1060,8 +1101,9 @@ const TreePage = observer(() => {
                         controlId="formBasicEmail"
                       >
                         <Form.Label>Фото</Form.Label>
-                        <UploadAvatar setFile={setFile}></UploadAvatar>
+                        <UploadAvatar setUuid={setUuid} setFile={setFile}></UploadAvatar>
                       </Form.Group>
+                      {/* <ImageUpload uuid={uuid} image1={file}></ImageUpload> */}
                       <Form.Group
                         className=" modal-row"
                         controlId="formBasicEmail"

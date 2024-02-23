@@ -26,6 +26,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { DEVICE_ROUTE } from "../utils/consts";
 const Family = observer(() => {
   let { id } = useParams();
+  const [uuid, setUuid] = useState(false);
   const { user } = useContext(Context);
   const ID = useLocation().state?.ID;
   const { state } = useLocation();
@@ -148,7 +149,7 @@ const Family = observer(() => {
         createFamilyGed(myFormData).then((data) => {
           console.log(data);
           console.log(myFormData);
-          window.location.reload();
+          //window.location.reload();
         });
       }
     } catch (e) {
@@ -162,9 +163,39 @@ const Family = observer(() => {
       changeFamily();
     }
   }, [formChange]);
-
+  const uploadImage = async () => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append(
+      "upload_preset",
+      process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
+    );
+    data.append("cloud_name", process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
+    data.append("public_id", uuid);
+    console.log(file);
+    console.log(uuid);
+    if (file && uuid) {
+      try {
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          {
+            method: "POST",
+            body: data,
+          }
+        );
+        const res = await response.json();
+        console.log(res);
+        console.log(res.public_id);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   const createTree = () => {
     try {
+      if ("img" in form) {
+        uploadImage();
+      }
       if (
         createItem.dateOfBirthday &&
         createItem.sex &&
@@ -177,7 +208,7 @@ const Family = observer(() => {
         createFamily(form).then((data) => {
           console.log(data);
           //setItems(data);
-          window.location.reload();
+          //window.location.reload();
         });
       }
     } catch (e) {
@@ -295,8 +326,16 @@ const Family = observer(() => {
                     required
                     accept=".ged,.gedcom"
                     placeholder="Выбрать файл"
-                    onChange={(e) => {
-                      setGedFile(e.target.files[0]);
+                    onChange={(event) => {
+                      var file = event.target.files[0];
+                      var reader = new FileReader();
+                      reader.onload = function(event) {
+                        // The file's text will be printed here
+                        setGedFile(event.target.result);
+                        console.log(event.target.result)
+                      };
+                      reader.readAsText(file);
+                     
                     }}
                   />
                 </Form.Group>
@@ -387,7 +426,10 @@ const Family = observer(() => {
                 </Form.Label>
                 <Form.Group className=" modal-row" controlId="formBasicEmail">
                   <Form.Label>Фото</Form.Label>
-                  <UploadAvatar setFile={setFile}></UploadAvatar>
+                  <UploadAvatar
+                    setUuid={setUuid}
+                    setFile={setFile}
+                  ></UploadAvatar>
                 </Form.Group>
                 <Form.Group className=" modal-row" controlId="formBasicEmail">
                   <Form.Label>Имя</Form.Label>
@@ -511,7 +553,7 @@ const Family = observer(() => {
                       dateOfBirthday: createItem.dateOfBirthday,
                       dateOfDeath: createItem.dateOfDeath,
                       public_tree: createItem.public_tree,
-                      img: file,
+                      img: uuid,
                     });
                   }}
                 >

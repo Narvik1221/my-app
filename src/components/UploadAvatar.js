@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Avatar from "react-avatar-edit";
-export default function UploadAvatar({ setFile }) {
+import uuid from 'react-uuid';
+export default function UploadAvatar({ setFile,setUuid }) {
   const [src, setSrc] = useState(null);
   const [srcImage, setSrcImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -24,6 +25,7 @@ export default function UploadAvatar({ setFile }) {
           });
           console.log(file);
           setFile(file);
+          setUuid(uuid())
         });
     }
   }, [preview]);

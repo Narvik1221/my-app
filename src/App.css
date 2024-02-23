@@ -79,6 +79,7 @@ path {
   cursor: pointer;
 }
 .pointer-link:hover{
+  margin-bottom: 4px;
   border-bottom: none;
 
 }
