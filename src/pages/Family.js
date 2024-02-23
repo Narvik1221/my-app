@@ -149,7 +149,7 @@ const Family = observer(() => {
         createFamilyGed(myFormData).then((data) => {
           console.log(data);
           console.log(myFormData);
-          //window.location.reload();
+        window.location.reload();
         });
       }
     } catch (e) {
@@ -208,7 +208,7 @@ const Family = observer(() => {
         createFamily(form).then((data) => {
           console.log(data);
           //setItems(data);
-          //window.location.reload();
+          window.location.reload();
         });
       }
     } catch (e) {
