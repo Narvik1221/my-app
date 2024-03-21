@@ -42,6 +42,9 @@ line {
   padding: 12px !important;
 
 }
+.auth-message{
+  margin-bottom: 16px;
+}
 .search-select{
   
   cursor: pointer;
@@ -69,6 +72,28 @@ path {
   font-weight: 500;
   padding: 6px 0;
 }
+.tree-navbar{
+  gap: 20px;
+  align-items: center;
+
+  display: flex;
+}
+.tree-navbar button{
+
+}
+.search-input.fio{
+min-width: 100px !important;
+}
+.container-search{
+  margin-top: 46px;
+  min-width: 500px;
+  width: 60vw;
+  min-height: 300px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 .pointer-link{
   display: flex;
   max-width: fit-content;
@@ -79,8 +104,7 @@ path {
   cursor: pointer;
 }
 .pointer-link:hover{
-  margin-bottom: 4px;
-  border-bottom: none;
+  border-bottom: 4px solid white;
 
 }
 .nav-inner{

@@ -39,11 +39,13 @@ const Search =observer( () => {
           />
           <Form.Select className="search-select"  aria-label="Default select example"
           onChange={e=>{
+            user.setSearchTable(false)
+            user.setSearchValue(false)
             setValue("")
             setSearchTable(e.target.id)
             setSearchtype(e.target.value)}}>
             <option className="search-option" id="User" value="Поиск по пользователям">Поиск по пользователям</option>
-            <option className="search-option" id="Family" value="Поиск по деревьям">Поиск по деревьям</option>
+            <option className="search-option" id="Family" value="Поиск внутри деревьев">Поиск внутри деревьев</option>
 
           </Form.Select>
           <Button

@@ -2,14 +2,15 @@ import React from "react";
 import "./modal.css";
 import close from "../assets/close.svg";
 
-const Modal = ({ active, setActive, children, classes, zIndex }) => {
+const Modal = ({ active, setActive, children, classes, zIndex,modalSearchWidth="460px" }) => {
   return (
     <div
     style={{ zIndex: zIndex }}
       className={active ? "modal active " : "modal"}
     >
       <div
-       style={{ zIndex: zIndex }}
+      
+       style={{ zIndex: zIndex,maxWidth:modalSearchWidth }}
         className={
           active
             ? classes

@@ -149,7 +149,7 @@ const Family = observer(() => {
         createFamilyGed(myFormData).then((data) => {
           console.log(data);
           console.log(myFormData);
-        window.location.reload();
+          window.location.reload();
         });
       }
     } catch (e) {
@@ -329,13 +329,12 @@ const Family = observer(() => {
                     onChange={(event) => {
                       var file = event.target.files[0];
                       var reader = new FileReader();
-                      reader.onload = function(event) {
+                      reader.onload = function (event) {
                         // The file's text will be printed here
                         setGedFile(event.target.result);
-                        console.log(event.target.result)
+                        console.log(event.target.result);
                       };
                       reader.readAsText(file);
-                     
                     }}
                   />
                 </Form.Group>
@@ -725,23 +724,34 @@ const Family = observer(() => {
                 <Form.Label className=" modal-row">
                   Дерево: {selectedItem.name}
                 </Form.Label>
+                {(user.isAuth && selectedItem.id == user.userId) ||
+                  (user.role == "ADMIN" && (
+                    <>
+                      <Button
+                        className="modal-row"
+                        onClick={() => setModalDelete(true)}
+                      >
+                        Удалить
+                      </Button>
+                      <Button
+                        className="modal-row"
+                        onClick={() => {
+                          console.log(selectedItem);
+                          setChangeItem(selectedItem);
+                          setModalChange(true);
+                        }}
+                      >
+                        Изменить
+                      </Button>
 
-                <Button
-                  className="modal-row"
-                  onClick={() => setModalDelete(true)}
-                >
-                  Удалить
-                </Button>
-                <Button
-                  className="modal-row"
-                  onClick={() => {
-                    console.log(selectedItem);
-                    setChangeItem(selectedItem);
-                    setModalChange(true);
-                  }}
-                >
-                  Изменить
-                </Button>
+                      <Button
+                        className="modal-row"
+                        onClick={() => searchAuto()}
+                      >
+                        Возможные родственники
+                      </Button>
+                    </>
+                  ))}
                 <Button
                   className="modal-row"
                   onClick={() =>
@@ -753,9 +763,6 @@ const Family = observer(() => {
                   }
                 >
                   Перейти к дереву
-                </Button>
-                <Button className="modal-row" onClick={() => searchAuto()}>
-                  Возможные родственники
                 </Button>
               </Form>
             </Container>
@@ -771,7 +778,7 @@ const Family = observer(() => {
                 window.location.reload();
               }}
             >
-              Пользователь: {myName} {mySurname}
+              Деревья пользователя: {myName} {mySurname}
             </div>{" "}
             {isSearch && "-> Деревья возможных родственников"}
           </h3>

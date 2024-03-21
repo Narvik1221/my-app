@@ -16,6 +16,7 @@ const App = observer(() => {
     check()
       .then((data) => {
         let isAuth = localStorage.getItem("userData");
+        
         const currentTree = localStorage.getItem("currentTree");
         const spouseId = localStorage.getItem("spouseId");
         const spouse = JSON.parse(localStorage.getItem("spouse"));
@@ -26,7 +27,7 @@ const App = observer(() => {
           user.setSpouse(spouse);
         }
 
-        if (isAuth) {
+        if (data!==undefined && data) {
           console.log(JSON.parse(isAuth).role);
           user.setRole(JSON.parse(isAuth).role);
           user.setUser(true);

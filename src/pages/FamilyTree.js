@@ -5,7 +5,8 @@ import Modal from "../Modal/Modal";
 import { observer } from "mobx-react-lite";
 import { Context } from "../index";
 import { useParams } from "react-router-dom";
-import uuid from 'react-uuid';
+import uuid from "react-uuid";
+import Table from "react-bootstrap/Table";
 import * as d3 from "d3";
 import {
   fetchOneTree,
@@ -16,6 +17,7 @@ import {
   deletePerson,
   deleteSpouse,
   createParent,
+  fetchSearchFIO,
 } from "../http/deviceAPI";
 import { useLocation } from "react-router-dom";
 import Form from "react-bootstrap/Form";
@@ -61,11 +63,16 @@ const TreePage = observer(() => {
   const [userData, setUserData] = useState(false);
   const [form, setForm] = useState(false);
   const [file, setFile] = useState(null);
-  const [cloudUrl,setCloudUrl]= useState(false);
+  const [cloudUrl, setCloudUrl] = useState(false);
   const [scrollCoords, setScrollCoords] = useState(null);
   const [validated, setValidated] = useState(false);
-  const [uuid,setUuid]= useState(false);
+  const [uuid, setUuid] = useState(false);
   const [cImg, setCimg] = useState(false);
+  const [modalSearch, setModalSearch] = useState(false);
+  const [searchName, setSearchName] = useState("");
+  const [searchSurname, setSearchSurname] = useState("");
+  const [searchPatr, setSearchPatr] = useState("");
+  const [searchDataFio, setSearchDataFio] = useState(false);
   const handleSubmit = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -131,8 +138,8 @@ const TreePage = observer(() => {
     }
   }, [scrollCoords]); //стартовая позиция окна
   useEffect(() => {
-    console.log(uuid)
-  }, [uuid]);
+    console.log(tree);
+  }, [tree]);
   useEffect(() => {
     console.log(user.currentTree);
     console.log(user.spouseId);
@@ -199,7 +206,7 @@ const TreePage = observer(() => {
             .attr(
               "width",
               w * 300 < window.screen.width
-                ? window.screen.width+200
+                ? window.screen.width + 200
                 : w * 300 + 400 // tree.people.length * 300 < 1500 ? 1500 : tree.people.length * 400
             )
             .attr(
@@ -259,7 +266,7 @@ const TreePage = observer(() => {
         );
       } catch (e) {
         console.error(e);
-        alert("Возникла ошибка при обработке файла")
+        alert("Возникла ошибка при обработке файла");
       }
     }
   }, [data]);
@@ -558,8 +565,8 @@ const TreePage = observer(() => {
       if (changeItem.dateOfDeath)
         formData.append("dateOfDeath", changeItem.dateOfDeath);
       console.log(file);
-      if(file && uuid){
-        uploadImage()
+      if (file && uuid) {
+        uploadImage();
         formData.append("img", uuid);
       }
       if (changeItem.hasOwnProperty("personId")) {
@@ -593,38 +600,34 @@ const TreePage = observer(() => {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }; //уникальный id для создаваемого родителя
 
-
   const uploadImage = async () => {
     const data = new FormData();
-    data.append("file",file );
+    data.append("file", file);
     data.append(
       "upload_preset",
       process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
     );
     data.append("cloud_name", process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
-    data.append("public_id",uuid)
+    data.append("public_id", uuid);
     console.log(file);
     console.log(uuid);
-    if(file && uuid){
+    if (file && uuid) {
       try {
         const response = await fetch(
           `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
           {
             method: "POST",
             body: data,
-         
           }
         );
         const res = await response.json();
         console.log(res);
-        console.log(res.public_id)
+        console.log(res.public_id);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
-   
   };
-
 
   const createDevice = () => {
     try {
@@ -640,11 +643,11 @@ const TreePage = observer(() => {
       myFormData.append("dateOfBirthday", createItem.dateOfBirthday);
       if (createItem.dateOfDeath)
         myFormData.append("dateOfDeath", createItem.dateOfDeath);
-      if(file && uuid){
-        uploadImage()
+      if (file && uuid) {
+        uploadImage();
         myFormData.append("img", uuid);
       }
-   
+
       console.log(form);
       console.log(createItem);
 
@@ -670,7 +673,7 @@ const TreePage = observer(() => {
           createItem.dateOfBirthday &&
           createItem.sex &&
           createItem.surname &&
-          createItem.name 
+          createItem.name
         ) {
           if (spouse) {
             myFormData.append("personId", selectedItem.id);
@@ -727,6 +730,33 @@ const TreePage = observer(() => {
     }
   };
 
+  const deleteCheck = () => {
+    let check = selectedItem.child;
+    console.log(selectedItem.hasOwnProperty("personId"));
+    if (selectedItem.hasOwnProperty("personId")) {
+      check = data.filter((i) => i.id == selectedItem.personId)[0].child;
+      console.log(check);
+    }
+    let c = data.filter((d) => d.parent == check);
+    console.log(c.length);
+    if (c.length > 0) return true;
+    else {
+      return false;
+    }
+  };
+
+  const searchFIO = async () => {
+    try {
+      let n = searchName 
+      let s = searchSurname 
+      let p = searchPatr
+      const response = await fetchSearchFIO(id, n, s, p);
+      setSearchDataFio(response);
+      console.log(response);
+    } catch (e) {
+      console.error(e);
+    }
+  };
   return (
     <>
       {tree ? (
@@ -735,6 +765,74 @@ const TreePage = observer(() => {
           tree.userId == user.data ||
           user.role == "ADMIN") ? (
           <Container fluid className="mt-3">
+            <Modal
+              modalSearchWidth={"70vw"}
+              active={modalSearch}
+              setActive={setModalSearch}
+            >
+              <Container className="container-search" fluid>
+                <Form className="d-flex" style={{ position: "relative" }}>
+                  <Form.Control
+                    type="search"
+                    placeholder={"Имя"}
+                    className="me-2 search-input fio"
+                    aria-label="Search"
+                    value={searchName}
+                    onChange={(e) => setSearchName(e.target.value)}
+                  />
+                  <Form.Control
+                    type="search"
+                    placeholder={"Фамилия"}
+                    className="me-2 search-input fio"
+                    aria-label="Search"
+                    value={searchSurname}
+                    onChange={(e) => setSearchSurname(e.target.value)}
+                  />
+                  <Form.Control
+                    type="search"
+                    placeholder={"Отчество"}
+                    className="me-2 search-input fio"
+                    aria-label="Search"
+                    value={searchPatr}
+                    onChange={(e) => setSearchPatr(e.target.value)}
+                  />
+                  <Button onClick={() => searchFIO()}>Найти</Button>
+                </Form>
+                <div className="search__result">
+                  {searchDataFio.length > 0 ? (
+                    <Table striped bordered hover>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Имя </th>
+                          <th>фамилия</th>
+                          <th>Отчество</th>
+                          <th>Пол</th>
+                          <th>Дата рождения</th>
+                          <th>Дата смерти</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {searchDataFio.map((d, index) => (
+                          <tr>
+                            <td>{index + 1}</td>
+                            <td>{d.name}</td>
+                            <td>{d.surname}</td>
+                            <td>{d.patr}</td>
+                            <td>{d.sex}</td>
+                            <td>{d.dateOfBirthday}</td>
+                            <td>{d.dateOfDeath}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  ) : (
+                    searchDataFio && <h3>Ничего не найдено</h3>
+                  )}
+                </div>
+              </Container>
+            </Modal>
             <Modal active={modalDelete} setActive={setModalDelete}>
               <div>
                 {selectedItem && (
@@ -800,7 +898,7 @@ const TreePage = observer(() => {
                         <span>Дата смерти: </span>
                         {selectedItem.dateOfDeath}
                       </div>
-                    
+
                       {(userData.role == "ADMIN" ||
                         (user.isAuth && tree.userId == userData.id)) && (
                         <>
@@ -840,7 +938,7 @@ const TreePage = observer(() => {
                               </div>
                             </Button>
                           )}
-                          {selectedItem.hasOwnProperty("personId") && (
+                          {/* {selectedItem.hasOwnProperty("personId") && (
                             <Button>
                               <div
                                 className="modal-row"
@@ -878,7 +976,7 @@ const TreePage = observer(() => {
                                 Открыть дерево супруга
                               </div>
                             </Button>
-                          )}
+                          )} */}
                           {selectedItem.parent == "" ? (
                             <Button>
                               <div
@@ -911,7 +1009,7 @@ const TreePage = observer(() => {
                           ) : (
                             <></>
                           )}
-                          {selectedItem.child != "0" ? (
+                          {!deleteCheck() ? (
                             <Button>
                               <div
                                 className="modal-row"
@@ -948,7 +1046,10 @@ const TreePage = observer(() => {
                         controlId="formBasicEmail"
                       >
                         <Form.Label>Фото</Form.Label>
-                        <UploadAvatar setUuid={setUuid} setFile={setFile}></UploadAvatar>
+                        <UploadAvatar
+                          setUuid={setUuid}
+                          setFile={setFile}
+                        ></UploadAvatar>
                       </Form.Group>
                       <Form.Group
                         className=" modal-row"
@@ -1102,7 +1203,10 @@ const TreePage = observer(() => {
                         controlId="formBasicEmail"
                       >
                         <Form.Label>Фото</Form.Label>
-                        <UploadAvatar setUuid={setUuid} setFile={setFile}></UploadAvatar>
+                        <UploadAvatar
+                          setUuid={setUuid}
+                          setFile={setFile}
+                        ></UploadAvatar>
                       </Form.Group>
                       {/* <ImageUpload uuid={uuid} image1={file}></ImageUpload> */}
                       <Form.Group
@@ -1278,27 +1382,33 @@ const TreePage = observer(() => {
             </Modal>
 
             <Container fluid="xxl">
-              <Container fluid="xxl">
+              <Container className="tree-navbar" fluid="xxl">
                 {tree && (
-                  <h3 className="title-text">
-                    {" "}
-                    <a
-                      onClick={() => {
-                        localStorage.removeItem("currentTree");
-                        localStorage.removeItem("spouse");
-                        localStorage.removeItem("spouseId");
-                        window.location.reload();
-                      }}
-                      className="pointer-link"
-                    >
-                      Дерево:{tree.name}{" "}
-                    </a>{" "}
-                    {user.spouse &&
-                      "->Супруг: " +
-                        user.spouse.name +
-                        " " +
-                        user.spouse.surname}{" "}
-                  </h3>
+                  <>
+                    <h3 className="title-text">
+                      {" "}
+                      <a
+                        onClick={() => {
+                          localStorage.removeItem("currentTree");
+                          localStorage.removeItem("spouse");
+                          localStorage.removeItem("spouseId");
+                          window.location.reload();
+                        }}
+                        className="pointer-link"
+                      >
+                        Дерево:{tree.name}{" "}
+                      </a>{" "}
+                      {user.spouse &&
+                        "->Супруг: " +
+                          user.spouse.name +
+                          " " +
+                          user.spouse.surname}{" "}
+                    </h3>
+
+                    <Button onClick={() => setModalSearch(true)}>
+                      Поиск по ФИО
+                    </Button>
+                  </>
                 )}
               </Container>
               {/* {cImg && (

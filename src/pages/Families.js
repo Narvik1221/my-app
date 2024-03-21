@@ -56,10 +56,10 @@ const Families = observer(() => {
   useEffect(() => {
     if (user.searchValue) {
       fetchFamiliesSearch(user.searchValue).then((data) => {
-        console.log(data);
+        //console.log(data);
         setItems(data);
         let myUser = localStorage.getItem("userData");
-        console.log(myUser);
+        //console.log(myUser);
         if (myUser) {
           setUserData(JSON.parse(myUser));
         }
@@ -67,20 +67,20 @@ const Families = observer(() => {
     } else {
       if (viewParam) {
         fetchAllFamilies().then((data) => {
-          console.log(data);
+          //console.log(data);
           setItems(data);
           let myUser = localStorage.getItem("userData");
-          console.log(myUser);
+          //console.log(myUser);
           if (myUser) {
             setUserData(JSON.parse(myUser));
           }
         });
       } else {
         fetchFamilies().then((data) => {
-          console.log(data);
+          //console.log(data);
           setItems(data);
           let myUser = localStorage.getItem("userData");
-          console.log(myUser);
+          //console.log(myUser);
           if (myUser) {
             setUserData(JSON.parse(myUser));
           }
@@ -89,12 +89,11 @@ const Families = observer(() => {
     }
   }, [user.searchValue, viewParam]);
   useEffect(() => {
-    console.log(items);
-    console.log(items.length);
+    //console.log(items);
+    //console.log(items.length);
   }, [items]);
 
   useEffect(() => {
-
     if (items) {
       getUser().then((data) => {
         setMyUsers(data);
@@ -115,11 +114,11 @@ const Families = observer(() => {
     }
   }, [myUsers]);
   useEffect(() => {
-    console.log(createItem);
+    //console.log(createItem);
   }, [createItem]);
 
   useEffect(() => {
-    console.log(createItem);
+    //console.log(createItem);
   }, [createItem]);
 
   useEffect(() => {
@@ -129,7 +128,7 @@ const Families = observer(() => {
   }, [form]);
   useEffect(() => {
     if (formChange) {
-      console.log(formChange);
+      //console.log(formChange);
       changeFamily();
     }
   }, [formChange]);
@@ -146,7 +145,7 @@ const Families = observer(() => {
         createItem.public_tree
       ) {
         createFamily(form).then((data) => {
-          console.log(data);
+          //console.log(data);
           //setItems(data);
           window.location.reload();
         });
@@ -158,7 +157,7 @@ const Families = observer(() => {
 
   const deleteFamily = () => {
     try {
-      console.log(selectedItem.id);
+      //console.log(selectedItem.id);
       delFamily(selectedItem.id).then((data) => {
         if (data != "1") {
           if (data.includes("нельзя")) {
@@ -176,7 +175,7 @@ const Families = observer(() => {
   const changeFamily = () => {
     try {
       putFamily(selectedItem.id, formChange).then((data) => {
-        console.log(data);
+        //console.log(data);
         window.location.reload();
       });
     } catch (e) {
@@ -556,7 +555,7 @@ const Families = observer(() => {
                         required
                         className="modal-row"
                         onClick={() => {
-                          console.log(selectedItem);
+                          //console.log(selectedItem);
                           setChangeItem(selectedItem);
                           setModalChange(true);
                         }}
@@ -590,7 +589,12 @@ const Families = observer(() => {
               <Button
                 variant="primary"
                 className="family-create-button modal-row"
-                onClick={() => history(FAMILY + "/" + userData.id)}
+                onClick={() => {
+                  user.setSearchTable(false);
+                  user.setSearchValue(false);
+
+                  history(FAMILY + "/" + userData.id);
+                }}
               >
                 Мои деревья
               </Button>
@@ -599,7 +603,12 @@ const Families = observer(() => {
               <Button
                 variant="primary"
                 className="family-create-button modal-row"
-                onClick={() => history(USERS)}
+                onClick={() => {
+                  user.setSearchTable(false);
+                  user.setSearchValue(false);
+
+                  history(USERS);
+                }}  
               >
                 Пользователи
               </Button>
@@ -608,7 +617,11 @@ const Families = observer(() => {
               <Button
                 variant="primary"
                 className="family-create-button modal-row"
-                onClick={() => setViewParam(!viewParam)}
+                onClick={() => {
+                  user.setSearchTable(false);
+                  user.setSearchValue(false);
+                  setViewParam(!viewParam);
+                }}
               >
                 {viewParam ? "Публичные деревья" : "Все деревья"}
               </Button>
@@ -616,9 +629,10 @@ const Families = observer(() => {
           </Row>
           <Row>
             <div className="family-cards-inner">
-              {items.length>0 && 
-                items.map((i) => (
-                  i.families.length>0 &&
+              {items.length > 0 &&
+                items.map(
+                  (i) =>
+                    i.families.length > 0 &&
                     i.families.map((j) => (
                       <Card className="family-tree-card">
                         <Card.Body className="card-body-tree">
@@ -650,7 +664,7 @@ const Families = observer(() => {
                         </Card.Body>
                       </Card>
                     ))
-                    ))}
+                )}
             </div>
           </Row>
         </>
