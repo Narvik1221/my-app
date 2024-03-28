@@ -56,10 +56,10 @@ const Families = observer(() => {
   useEffect(() => {
     if (user.searchValue) {
       fetchFamiliesSearch(user.searchValue).then((data) => {
-        //console.log(data);
+     
         setItems(data);
         let myUser = localStorage.getItem("userData");
-        //console.log(myUser);
+
         if (myUser) {
           setUserData(JSON.parse(myUser));
         }
@@ -67,20 +67,20 @@ const Families = observer(() => {
     } else {
       if (viewParam) {
         fetchAllFamilies().then((data) => {
-          //console.log(data);
+
           setItems(data);
           let myUser = localStorage.getItem("userData");
-          //console.log(myUser);
+
           if (myUser) {
             setUserData(JSON.parse(myUser));
           }
         });
       } else {
         fetchFamilies().then((data) => {
-          //console.log(data);
+
           setItems(data);
           let myUser = localStorage.getItem("userData");
-          //console.log(myUser);
+
           if (myUser) {
             setUserData(JSON.parse(myUser));
           }
@@ -89,8 +89,7 @@ const Families = observer(() => {
     }
   }, [user.searchValue, viewParam]);
   useEffect(() => {
-    //console.log(items);
-    //console.log(items.length);
+
   }, [items]);
 
   useEffect(() => {
@@ -113,13 +112,6 @@ const Families = observer(() => {
       });
     }
   }, [myUsers]);
-  useEffect(() => {
-    //console.log(createItem);
-  }, [createItem]);
-
-  useEffect(() => {
-    //console.log(createItem);
-  }, [createItem]);
 
   useEffect(() => {
     if (form) {
@@ -128,7 +120,6 @@ const Families = observer(() => {
   }, [form]);
   useEffect(() => {
     if (formChange) {
-      //console.log(formChange);
       changeFamily();
     }
   }, [formChange]);
@@ -145,8 +136,6 @@ const Families = observer(() => {
         createItem.public_tree
       ) {
         createFamily(form).then((data) => {
-          //console.log(data);
-          //setItems(data);
           window.location.reload();
         });
       }
@@ -157,7 +146,6 @@ const Families = observer(() => {
 
   const deleteFamily = () => {
     try {
-      //console.log(selectedItem.id);
       delFamily(selectedItem.id).then((data) => {
         if (data != "1") {
           if (data.includes("нельзя")) {
@@ -175,7 +163,6 @@ const Families = observer(() => {
   const changeFamily = () => {
     try {
       putFamily(selectedItem.id, formChange).then((data) => {
-        //console.log(data);
         window.location.reload();
       });
     } catch (e) {

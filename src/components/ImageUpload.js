@@ -7,10 +7,7 @@ const ImageUpload = ({image1,uuid}) => {
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
 
-  useEffect(()=>{
-    console.log(image1)
-    console.log(uuid)
-  },[image1])
+
   const uploadImage = async () => {
     setLoading(true);
     const data = new FormData();
@@ -21,7 +18,7 @@ const ImageUpload = ({image1,uuid}) => {
     );
     data.append("cloud_name", process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
     data.append("public_id",uuid)
-    console.log(image1);
+  
     try {
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -32,8 +29,6 @@ const ImageUpload = ({image1,uuid}) => {
         }
       );
       const res = await response.json();
-      console.log(res);
-      console.log(res.public_id)
       setUrl(res.public_id);
       setLoading(false);
     } catch (error) {

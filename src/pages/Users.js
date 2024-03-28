@@ -30,8 +30,8 @@ const Users = observer(() => {
   const [modalDelete, setModalDelete] = useState(false);
   const [selectedItem, setSelectedItem] = useState(false);
   useEffect(() => {
-    console.log("user");
-    console.log(user);
+    
+  
     let myUser = localStorage.getItem("userData");
     setUserData(JSON.parse(myUser));
   }, []);
@@ -42,20 +42,20 @@ const Users = observer(() => {
         setItems(data.data.user);
         let myUser = localStorage.getItem("userData");
         console.log(myUser);
-        console.log("user");
-        console.log(user);
+        
+      
         if (myUser) {
           setUserData(JSON.parse(myUser));
         }
       });
     } else {
-      console.log("default ");
+  
       getUser().then((data) => {
         setItems(data.data.user);
         let myUser = localStorage.getItem("userData");
         console.log(myUser);
-        console.log("user");
-        console.log(user);
+        
+      
         if (myUser) {
           setUserData(JSON.parse(myUser));
         }
@@ -65,9 +65,9 @@ const Users = observer(() => {
   useEffect(() => {}, []);
   const blockUserHandle = () => {
     try {
-      console.log(selectedItem.id);
+     
       blockUser(selectedItem.id, !selectedItem.blocked).then((data) => {
-        console.log(data);
+    
         window.location.reload();
       });
     } catch (e) {

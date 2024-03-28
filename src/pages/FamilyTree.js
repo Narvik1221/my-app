@@ -84,13 +84,11 @@ const TreePage = observer(() => {
   };
   useEffect(() => {
     if (scrollCoords) {
-      console.log(scrollCoords.x.animVal.value);
-      console.log(scrollCoords.y.animVal.value);
+
       let person = document.querySelectorAll("#person");
-      console.log(person);
+
       const ele = document.getElementById("container-drag");
-      //panzoom(ele);
-      // Set initial scroll position
+
       ele.scrollTo(
         scrollCoords.x.animVal.value * 0.85,
         scrollCoords.y.animVal.value
@@ -138,12 +136,9 @@ const TreePage = observer(() => {
     }
   }, [scrollCoords]); //стартовая позиция окна
   useEffect(() => {
-    console.log(tree);
   }, [tree]);
   useEffect(() => {
-    console.log(user.currentTree);
-    console.log(user.spouseId);
-    console.log(user.spouse);
+
     fetchOneTree(id, user.currentTree, user.spouseId).then((data) => {
       setTree(data);
       localStorage.removeItem("currentTree");
@@ -154,15 +149,13 @@ const TreePage = observer(() => {
 
   useEffect(() => {
     if (tree !== null && tree) {
-      console.log(tree);
+
       if (
         !tree.blocked &&
         (tree.public_tree || tree.userId == user.data || user.role == "ADMIN")
       ) {
-        console.log(tree);
-        // tree.people[0].parent = "-1";
 
-        console.log(tree);
+
         const counts = {};
         tree.people.forEach(function (x) {
           if (x.parent !== "") {
@@ -170,7 +163,7 @@ const TreePage = observer(() => {
             else counts[x.parent] = (counts[x.parent] || 0) + 1;
           }
         });
-        console.log(counts);
+
         let sum = 0;
         Object.entries(counts).forEach(([key, value]) => {
           if (value > 1) {
@@ -185,7 +178,7 @@ const TreePage = observer(() => {
   }, [tree]);
   useEffect(() => {
     let myUser = localStorage.getItem("userData");
-    console.log(myUser);
+
     if (myUser) {
       setUserData(JSON.parse(myUser));
     }
@@ -197,7 +190,7 @@ const TreePage = observer(() => {
       (tree.public_tree || tree.userId == user.data || user.role == "ADMIN")
     ) {
       if (tree) {
-        console.log(tree.people.length);
+
 
         setSvg(
           d3
@@ -235,7 +228,7 @@ const TreePage = observer(() => {
   }, [tree]);
   useEffect(() => {
     if (!modalCreate) {
-      console.log(modalCreate);
+
       setCreateItem((prevState) => ({
         ...prevState,
         name: "",
@@ -252,8 +245,7 @@ const TreePage = observer(() => {
   useEffect(() => {
     if (data) {
       try {
-        console.log(data);
-
+    
         setDataStructure(
           d3
             .stratify()
@@ -384,10 +376,10 @@ const TreePage = observer(() => {
           .classed("img-card", true)
           .classed("hide", function (d) {
             if (d.data.spouses[0]?.name == undefined) {
-              console.log(true);
+           
               return true;
             } else {
-              console.log(false);
+       
               return false;
             }
           })
@@ -441,10 +433,10 @@ const TreePage = observer(() => {
         .attr("ry", "20")
         .classed("hide", function (d) {
           if (d.data.spouses[0]?.name == undefined) {
-            console.log(true);
+         
             return true;
           } else {
-            console.log(false);
+         
             return false;
           }
         });
@@ -533,7 +525,7 @@ const TreePage = observer(() => {
         .classed("bigger", true);
 
       let rects = document.querySelectorAll("rect");
-      console.log(rects[0]);
+
       setScrollCoords({
         x: rects[0].x,
         y: rects[0].y,
@@ -550,7 +542,7 @@ const TreePage = observer(() => {
 
   const openModal = (rect) => {
     setSelectedItem(rect);
-    console.log(rect);
+
     setModal(true);
   };
 
@@ -564,21 +556,21 @@ const TreePage = observer(() => {
       formData.append("dateOfBirthday", changeItem.dateOfBirthday);
       if (changeItem.dateOfDeath)
         formData.append("dateOfDeath", changeItem.dateOfDeath);
-      console.log(file);
+
       if (file && uuid) {
         uploadImage();
         formData.append("img", uuid);
       }
       if (changeItem.hasOwnProperty("personId")) {
-        console.log(selectedItem.id);
+      
 
         changeSpouse(selectedItem.id, formData).then((data) => {
-          console.log(data);
+   
           window.location.reload();
         });
       } else {
         changePerson(selectedItem.id, formData).then((data) => {
-          console.log(data);
+  
           window.location.reload();
         });
       }
@@ -586,12 +578,10 @@ const TreePage = observer(() => {
       console.error(e);
     }
   };
-  useEffect(() => {
-    console.log(selectedItem);
-  }, [selectedItem]);
+
   useEffect(() => {
     if (form) {
-      console.log(form);
+
       createDevice();
     }
   }, [form]);
@@ -609,8 +599,7 @@ const TreePage = observer(() => {
     );
     data.append("cloud_name", process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
     data.append("public_id", uuid);
-    console.log(file);
-    console.log(uuid);
+
     if (file && uuid) {
       try {
         const response = await fetch(
@@ -621,8 +610,7 @@ const TreePage = observer(() => {
           }
         );
         const res = await response.json();
-        console.log(res);
-        console.log(res.public_id);
+
       } catch (error) {
         console.log(error);
       }
@@ -648,15 +636,14 @@ const TreePage = observer(() => {
         myFormData.append("img", uuid);
       }
 
-      console.log(form);
-      console.log(createItem);
+
 
       if (parent) {
         myFormData.append("parent", "");
         myFormData.append("current", uid());
         myFormData.append("currentId", selectedItem.id);
       } else if (brother) {
-        console.log(selectedItem.spouse);
+  
         if (selectedItem.parent == "") {
           myFormData.append("parent", "");
           myFormData.append("current", uid());
@@ -679,19 +666,17 @@ const TreePage = observer(() => {
             myFormData.append("personId", selectedItem.id);
 
             createSpouse(myFormData).then((data) => {
-              console.log(data);
+          
               window.location.reload();
             });
           } else if (parent && myFormData.has("current")) {
             createParent(myFormData).then((data) => {
-              console.log(myFormData);
-              console.log(data);
+      
               window.location.reload();
             });
           } else {
             createPerson(myFormData).then((data) => {
-              console.log(myFormData);
-              console.log(data);
+     
               window.location.reload();
             });
           }
@@ -704,11 +689,11 @@ const TreePage = observer(() => {
 
   const deleteDevice = () => {
     try {
-      console.log(selectedItem);
+
       if (selectedItem.hasOwnProperty("personId")) {
         deleteSpouse(selectedItem.id, selectedItem.personId, id).then(
           (data) => {
-            console.log(data);
+          
             window.location.reload();
           }
         );
@@ -722,7 +707,7 @@ const TreePage = observer(() => {
             window.location.reload();
           }
 
-          //window.location.reload()
+ 
         });
       }
     } catch (e) {
@@ -732,13 +717,13 @@ const TreePage = observer(() => {
 
   const deleteCheck = () => {
     let check = selectedItem.child;
-    console.log(selectedItem.hasOwnProperty("personId"));
+
     if (selectedItem.hasOwnProperty("personId")) {
       check = data.filter((i) => i.id == selectedItem.personId)[0].child;
-      console.log(check);
+  
     }
     let c = data.filter((d) => d.parent == check);
-    console.log(c.length);
+  
     if (c.length > 0) return true;
     else {
       return false;
@@ -752,7 +737,7 @@ const TreePage = observer(() => {
       let p = searchPatr
       const response = await fetchSearchFIO(id, n, s, p);
       setSearchDataFio(response);
-      console.log(response);
+   
     } catch (e) {
       console.error(e);
     }
@@ -938,7 +923,7 @@ const TreePage = observer(() => {
                               </div>
                             </Button>
                           )}
-                          {/* {selectedItem.hasOwnProperty("personId") && (
+                          {selectedItem.hasOwnProperty("personId") && (
                             <Button>
                               <div
                                 className="modal-row"
@@ -976,7 +961,7 @@ const TreePage = observer(() => {
                                 Открыть дерево супруга
                               </div>
                             </Button>
-                          )} */}
+                          )}
                           {selectedItem.parent == "" ? (
                             <Button>
                               <div

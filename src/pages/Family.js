@@ -64,32 +64,31 @@ const Family = observer(() => {
     setValidated(true);
   };
   useEffect(() => {
-    console.log("userId");
-    console.log(id);
+
     if (id) {
       getUser().then((data) => {
         let d = data.data.user.filter((d) => d.id == id);
-        console.log(d);
+
         setMyName(d[0].name);
         setMySurname(d[0].surname);
       });
     }
-    console.log(user.isAuth);
+
     let myUser = localStorage.getItem("userData");
     setUserData(JSON.parse(myUser));
   }, []);
   useEffect(() => {
-    console.log(items);
+
   }, [items]);
   useEffect(() => {
     if (userData) {
-      console.log(userData);
+
       let param = userData.id;
       if (typeof ID == "number") {
         param = ID;
       }
       fetchOneFamily(param).then((data) => {
-        console.log(data);
+
         setItems(data);
       });
     }
@@ -116,9 +115,7 @@ const Family = observer(() => {
       });
     }
   }, [myUsers]);
-  useEffect(() => {
-    console.log(createItem);
-  }, [createItem]);
+
 
   useEffect(() => {
     if (form) {
@@ -145,10 +142,9 @@ const Family = observer(() => {
         myFormData.append("userId", createItemGed.userId);
         myFormData.append("public_tree", createItemGed.public_tree);
         myFormData.append("file", gedFile);
-        console.log(gedFile);
+
         createFamilyGed(myFormData).then((data) => {
-          console.log(data);
-          console.log(myFormData);
+
           window.location.reload();
         });
       }
@@ -159,7 +155,7 @@ const Family = observer(() => {
 
   useEffect(() => {
     if (formChange) {
-      console.log(formChange);
+
       changeFamily();
     }
   }, [formChange]);
@@ -172,8 +168,6 @@ const Family = observer(() => {
     );
     data.append("cloud_name", process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
     data.append("public_id", uuid);
-    console.log(file);
-    console.log(uuid);
     if (file && uuid) {
       try {
         const response = await fetch(
@@ -184,10 +178,9 @@ const Family = observer(() => {
           }
         );
         const res = await response.json();
-        console.log(res);
-        console.log(res.public_id);
+
       } catch (error) {
-        console.log(error);
+ 
       }
     }
   };
@@ -206,8 +199,7 @@ const Family = observer(() => {
         createItem.public_tree
       ) {
         createFamily(form).then((data) => {
-          console.log(data);
-          //setItems(data);
+
           window.location.reload();
         });
       }
@@ -218,7 +210,7 @@ const Family = observer(() => {
 
   const deleteFamily = () => {
     try {
-      console.log(selectedItem.id);
+
       delFamily(selectedItem.id).then((data) => {
         if (data != "1") {
           if (data.includes("нельзя")) {
@@ -236,7 +228,7 @@ const Family = observer(() => {
   const changeFamily = () => {
     try {
       putFamily(selectedItem.id, formChange).then((data) => {
-        console.log(data);
+
         window.location.reload();
       });
     } catch (e) {
@@ -249,7 +241,7 @@ const Family = observer(() => {
     fetchFamiliesAutoSearch(selectedItem.id, selectedItem.userId).then(
       (data) => {
         setIsSearch(true);
-        console.log(data);
+    
         setItems(data);
       }
     );

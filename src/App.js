@@ -21,14 +21,13 @@ const App = observer(() => {
         const spouseId = localStorage.getItem("spouseId");
         const spouse = JSON.parse(localStorage.getItem("spouse"));
         if (currentTree && currentTree !== undefined && currentTree !== null) {
-          console.log(currentTree);
+    
           user.setCurrentTree(currentTree);
           user.setSpouseId(spouseId);
           user.setSpouse(spouse);
         }
 
         if (data!==undefined && data) {
-          console.log(JSON.parse(isAuth).role);
           user.setRole(JSON.parse(isAuth).role);
           user.setUser(true);
           user.setIsAuth(true);
