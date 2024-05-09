@@ -36,7 +36,7 @@ const Family = observer(() => {
   const [modalCreate, setModalCreate] = useState(false);
   const [modalCreateGed, setModalCreateGed] = useState(false);
   const history = useNavigate();
-  const [items, setItems] = useState(false);
+  const [items, setItems] = useState(true);
   const [changeItem, setChangeItem] = useState({});
   const [createItem, setCreateItem] = useState({});
   const [createItemGed, setCreateItemGed] = useState({});
@@ -64,7 +64,6 @@ const Family = observer(() => {
     setValidated(true);
   };
   useEffect(() => {
-
     if (id) {
       getUser().then((data) => {
         let d = data.data.user.filter((d) => d.id == id);
@@ -75,20 +74,26 @@ const Family = observer(() => {
     }
 
     let myUser = localStorage.getItem("userData");
-    setUserData(JSON.parse(myUser));
+    console.log(JSON.parse(myUser));
+    setUserData(JSON.parse(myUser).dataValues);
   }, []);
   useEffect(() => {
-
-  }, [items]);
+    console.log(user.userId);
+    console.log(selectedItem.userId);
+    console.log(
+      (user.isAuth && selectedItem.userId == user.userId) ||
+        user.role == "ADMIN"
+    );
+    console.log(user.isAuth && selectedItem.userId == user.userId);
+  }, [selectedItem]);
   useEffect(() => {
     if (userData) {
-
+      console.log(userData);
       let param = userData.id;
       if (typeof ID == "number") {
         param = ID;
       }
       fetchOneFamily(param).then((data) => {
-
         setItems(data);
       });
     }
@@ -116,7 +121,6 @@ const Family = observer(() => {
     }
   }, [myUsers]);
 
-
   useEffect(() => {
     if (form) {
       createTree();
@@ -133,18 +137,17 @@ const Family = observer(() => {
       if (
         gedFile &&
         createItemGed.name &&
-        createItemGed.userId &&
+        userData.id &&
         createItemGed.public_tree
       ) {
         setGedButtonText("Идет загрузка...");
         let myFormData = new FormData();
         myFormData.append("name", createItemGed.name);
-        myFormData.append("userId", createItemGed.userId);
+        myFormData.append("userId", userData.id);
         myFormData.append("public_tree", createItemGed.public_tree);
         myFormData.append("file", gedFile);
 
         createFamilyGed(myFormData).then((data) => {
-
           window.location.reload();
         });
       }
@@ -155,7 +158,6 @@ const Family = observer(() => {
 
   useEffect(() => {
     if (formChange) {
-
       changeFamily();
     }
   }, [formChange]);
@@ -178,14 +180,15 @@ const Family = observer(() => {
           }
         );
         const res = await response.json();
-
-      } catch (error) {
- 
-      }
+        if (!!res) {
+          window.location.reload();
+        }
+      } catch (error) {}
     }
   };
   const createTree = () => {
     try {
+      console.log(createItem);
       if ("img" in form) {
         uploadImage();
       }
@@ -195,12 +198,13 @@ const Family = observer(() => {
         createItem.surname &&
         createItem.name &&
         createItem.namePerson &&
-        createItem.userId &&
+        userData.id &&
         createItem.public_tree
       ) {
         createFamily(form).then((data) => {
-
-          window.location.reload();
+          if (!"img" in form) {
+            window.location.reload();
+          }
         });
       }
     } catch (e) {
@@ -210,7 +214,6 @@ const Family = observer(() => {
 
   const deleteFamily = () => {
     try {
-
       delFamily(selectedItem.id).then((data) => {
         if (data != "1") {
           if (data.includes("нельзя")) {
@@ -228,7 +231,6 @@ const Family = observer(() => {
   const changeFamily = () => {
     try {
       putFamily(selectedItem.id, formChange).then((data) => {
-
         window.location.reload();
       });
     } catch (e) {
@@ -241,7 +243,7 @@ const Family = observer(() => {
     fetchFamiliesAutoSearch(selectedItem.id, selectedItem.userId).then(
       (data) => {
         setIsSearch(true);
-    
+
         setItems(data);
       }
     );
@@ -336,7 +338,7 @@ const Family = observer(() => {
                   onClick={() => {
                     setFormGed({
                       name: createItemGed.name,
-                      userId: createItemGed.userId,
+                      userId: userData.id,
                       public_tree: createItemGed.public_tree,
                       file: gedFile,
                     });
@@ -535,7 +537,7 @@ const Family = observer(() => {
                   className="modal-row"
                   onClick={() => {
                     setForm({
-                      userId: createItem.userId,
+                      userId: userData.id,
                       namePerson: createItem.namePerson,
                       name: createItem.name,
                       surname: createItem.surname,
@@ -707,7 +709,7 @@ const Family = observer(() => {
           )}
         </div>
       </Modal>
-
+      {/* проблема с ролями в модалке */}
       <Modal active={modal} setActive={setModal}>
         <div>
           {selectedItem && (
@@ -716,34 +718,31 @@ const Family = observer(() => {
                 <Form.Label className=" modal-row">
                   Дерево: {selectedItem.name}
                 </Form.Label>
-                {(user.isAuth && selectedItem.id == user.userId) ||
-                  (user.role == "ADMIN" && (
-                    <>
-                      <Button
-                        className="modal-row"
-                        onClick={() => setModalDelete(true)}
-                      >
-                        Удалить
-                      </Button>
-                      <Button
-                        className="modal-row"
-                        onClick={() => {
-                          console.log(selectedItem);
-                          setChangeItem(selectedItem);
-                          setModalChange(true);
-                        }}
-                      >
-                        Изменить
-                      </Button>
+                {((user.isAuth && selectedItem.userId == user.userId) ||
+                  user.role == "ADMIN") && (
+                  <>
+                    <Button
+                      className="modal-row"
+                      onClick={() => setModalDelete(true)}
+                    >
+                      Удалить
+                    </Button>
+                    <Button
+                      className="modal-row"
+                      onClick={() => {
+                        console.log(selectedItem);
+                        setChangeItem(selectedItem);
+                        setModalChange(true);
+                      }}
+                    >
+                      Изменить
+                    </Button>
 
-                      <Button
-                        className="modal-row"
-                        onClick={() => searchAuto()}
-                      >
-                        Возможные родственники
-                      </Button>
-                    </>
-                  ))}
+                    <Button className="modal-row">
+                      Возможные родственники
+                    </Button>
+                  </>
+                )}
                 <Button
                   className="modal-row"
                   onClick={() =>
@@ -796,38 +795,39 @@ const Family = observer(() => {
       <Row>
         {items ? (
           <div className="family-cards-inner">
-            {items.map((i) => (
-              <Card className="family-tree-card">
-                <Card.Body className="card-body-tree">
-                  <Card.Title style={{ fontSize: "28px" }}>
-                    Дерево: {i.name}
-                  </Card.Title>
-                  <Card.Title style={{ fontSize: "18px" }}>
-                    Тип: {i.public_tree ? "публичное" : "приватное"}
-                  </Card.Title>
-                  <Card.Title style={{ fontSize: "18px" }}>
-                    Заблокированное: {i.blocked ? "да" : "нет"}
-                  </Card.Title>
-                  <Card.Title
-                    className="family-owner"
-                    id={i.userId}
-                    style={{ fontSize: "18px" }}
-                  >
-                    владелец: {}
-                  </Card.Title>
-                  <Button
-                    className="family-card-button"
-                    variant="primary"
-                    onClick={() => {
-                      setSelectedItem(i);
-                      setModal(true);
-                    }}
-                  >
-                    Открыть
-                  </Button>
-                </Card.Body>
-              </Card>
-            ))}
+            {items.length > 0 &&
+              items.map((i) => (
+                <Card className="family-tree-card">
+                  <Card.Body className="card-body-tree">
+                    <Card.Title style={{ fontSize: "28px" }}>
+                      Дерево: {i.name}
+                    </Card.Title>
+                    <Card.Title style={{ fontSize: "18px" }}>
+                      Тип: {i.public_tree ? "публичное" : "приватное"}
+                    </Card.Title>
+                    <Card.Title style={{ fontSize: "18px" }}>
+                      Заблокированное: {i.blocked ? "да" : "нет"}
+                    </Card.Title>
+                    <Card.Title
+                      className="family-owner"
+                      id={i.userId}
+                      style={{ fontSize: "18px" }}
+                    >
+                      владелец: {}
+                    </Card.Title>
+                    <Button
+                      className="family-card-button"
+                      variant="primary"
+                      onClick={() => {
+                        setSelectedItem(i);
+                        setModal(true);
+                      }}
+                    >
+                      Открыть
+                    </Button>
+                  </Card.Body>
+                </Card>
+              ))}
           </div>
         ) : (
           <Loader></Loader>

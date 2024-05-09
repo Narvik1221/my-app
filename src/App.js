@@ -15,24 +15,27 @@ const App = observer(() => {
   useEffect(() => {
     check()
       .then((data) => {
+        console.log(data);
         let isAuth = localStorage.getItem("userData");
-        
+
         const currentTree = localStorage.getItem("currentTree");
         const spouseId = localStorage.getItem("spouseId");
         const spouse = JSON.parse(localStorage.getItem("spouse"));
         if (currentTree && currentTree !== undefined && currentTree !== null) {
-    
           user.setCurrentTree(currentTree);
           user.setSpouseId(spouseId);
           user.setSpouse(spouse);
         }
 
-        if (data!==undefined && data) {
+        if (isAuth !== undefined && isAuth) {
+          let auth = JSON.parse(isAuth).dataValues;
+          console.log();
           user.setRole(JSON.parse(isAuth).role);
           user.setUser(true);
+          user.setUserId(auth.id);
           user.setIsAuth(true);
-          user.setName(JSON.parse(isAuth).name);
-          user.setSurname(JSON.parse(isAuth).surname);
+          user.setName(auth.name);
+          user.setSurname(auth.surname);
         }
       })
       .finally(() => setLoading(false));

@@ -33,7 +33,7 @@ const Users = observer(() => {
     
   
     let myUser = localStorage.getItem("userData");
-    setUserData(JSON.parse(myUser));
+    setUserData(JSON.parse(myUser).dataValues);
   }, []);
   useEffect(() => {
     console.log(user.searchValue);
@@ -45,7 +45,7 @@ const Users = observer(() => {
         
       
         if (myUser) {
-          setUserData(JSON.parse(myUser));
+          setUserData(JSON.parse(myUser).dataValues);
         }
       });
     } else {
@@ -57,7 +57,7 @@ const Users = observer(() => {
         
       
         if (myUser) {
-          setUserData(JSON.parse(myUser));
+          setUserData(JSON.parse(myUser).dataValues);
         }
       });
     }

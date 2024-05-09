@@ -33,7 +33,7 @@ const NavBar = observer(() => {
       let myUser = localStorage.getItem("userData");
       console.log(user.name);
       if (myUser) {
-        setUserData(JSON.parse(myUser));
+        setUserData(JSON.parse(myUser).dataValues);
       }
     } catch (error) {
       console.error(error);

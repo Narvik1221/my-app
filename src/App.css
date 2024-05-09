@@ -3,7 +3,10 @@ html,
 #root {
   height: 100%;
 }
-
+iframe
+{
+    display: none;
+}
 rect {
   height: 40px;
   width: 140px;

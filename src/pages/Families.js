@@ -31,7 +31,7 @@ const Families = observer(() => {
   const [modalCreate, setModalCreate] = useState(false);
   const [viewParam, setViewParam] = useState(false);
   const history = useNavigate();
-  const [items, setItems] = useState(false);
+  const [items, setItems] = useState(true);
   const [changeItem, setChangeItem] = useState({});
   const [modal, setModal] = useState(false);
   const [createItem, setCreateItem] = useState({});
@@ -61,7 +61,7 @@ const Families = observer(() => {
         let myUser = localStorage.getItem("userData");
 
         if (myUser) {
-          setUserData(JSON.parse(myUser));
+          setUserData(JSON.parse(myUser).dataValues);
         }
       });
     } else {
@@ -72,7 +72,7 @@ const Families = observer(() => {
           let myUser = localStorage.getItem("userData");
 
           if (myUser) {
-            setUserData(JSON.parse(myUser));
+            setUserData(JSON.parse(myUser).dataValues);
           }
         });
       } else {
@@ -82,14 +82,14 @@ const Families = observer(() => {
           let myUser = localStorage.getItem("userData");
 
           if (myUser) {
-            setUserData(JSON.parse(myUser));
+            setUserData(JSON.parse(myUser).dataValues);
           }
         });
       }
     }
   }, [user.searchValue, viewParam]);
   useEffect(() => {
-
+    console.log(items)
   }, [items]);
 
   useEffect(() => {
@@ -578,9 +578,9 @@ const Families = observer(() => {
                 className="family-create-button modal-row"
                 onClick={() => {
                   user.setSearchTable(false);
-                  user.setSearchValue(false);
-
-                  history(FAMILY + "/" + userData.id);
+                  user.setSearchValue(false); 
+                  console.log(user)
+                  history(FAMILY + "/" + user.userId);
                 }}
               >
                 Мои деревья

@@ -29,6 +29,7 @@ const ImageUpload = ({image1,uuid}) => {
         }
       );
       const res = await response.json();
+      console.log(res)
       setUrl(res.public_id);
       setLoading(false);
     } catch (error) {

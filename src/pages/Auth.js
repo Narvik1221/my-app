@@ -57,7 +57,6 @@ const Auth = observer(() => {
         user.setName(data.userData.name);
         user.setSurname(data.userData.surname);
         history(FAMILIES_ROUTE);
-        //window.location.reload();
       }
     } catch (e) {
       alert(e.response);
