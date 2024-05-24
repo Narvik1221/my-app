@@ -58,6 +58,7 @@ const NavBar = observer(() => {
           to={FAMILIES_ROUTE}
         >
           FAMILY TREE
+          
         </NavLink>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse
